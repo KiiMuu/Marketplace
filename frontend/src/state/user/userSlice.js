@@ -1,19 +1,41 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { registerUser, loginUser } from './userApi';
 
 export const userSlice = createSlice({
 	name: 'user',
 	initialState: {
-		userInfo: {
-			username: 'Karim',
-		},
+		status: 'idle',
+		errors: [],
+		userInfo: {},
 	},
-	reducers: {
-		changeUsername: state => {
-			state.userInfo.username = 'Mo';
-		},
+	reducers: {},
+	extraReducers(builder) {
+		builder
+			.addCase(registerUser.pending, (state, action) => {
+				state.status = 'loading';
+			})
+			.addCase(registerUser.fulfilled, (state, action) => {
+				state.status = 'succeeded';
+				state.errors = [];
+				state.userInfo = action.payload;
+			})
+			.addCase(registerUser.rejected, (state, action) => {
+				state.status = 'failed';
+				state.errors = action.payload;
+			})
+			.addCase(loginUser.pending, (state, action) => {
+				state.status = 'loading';
+			})
+			.addCase(loginUser.fulfilled, (state, action) => {
+				state.status = 'succeeded';
+				state.errors = [];
+				state.userInfo = action.payload;
+			})
+			.addCase(loginUser.rejected, (state, action) => {
+				state.status = 'failed';
+				state.errors = action.payload;
+			});
 	},
 });
-
-export const { changeUsername } = userSlice.actions;
 
 export default userSlice.reducer;

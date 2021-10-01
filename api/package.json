@@ -5,17 +5,22 @@
 	"main": "app.js",
 	"scripts": {
 		"start": "node -r esm app",
-		"server": "nodemon -r esm app"
+		"server": "nodemon -r esm app",
+		"frontend": "npm start --prefix ../frontend",
+		"dev": "concurrently \"npm run server\" \"npm run frontend\""
 	},
 	"author": "Karim Muhamad",
 	"license": "ISC",
 	"dependencies": {
+		"bcrypt": "^5.0.1",
 		"compression": "^1.7.4",
+		"concurrently": "^6.2.2",
 		"cors": "^2.8.5",
 		"dotenv": "^10.0.0",
 		"esm": "^3.2.25",
 		"express": "^4.17.1",
 		"helmet": "^4.6.0",
+		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^6.0.8",
 		"morgan": "^1.10.0",
 		"nodemon": "^2.0.13"

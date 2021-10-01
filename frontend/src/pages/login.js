@@ -1,24 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from 'state/user/userApi';
 import { AuthPageWrapper } from 'styles/auth';
 import {
-	Button,
 	FormControl,
 	IconButton,
 	InputAdornment,
 	InputLabel,
+	FormHelperText,
 	OutlinedInput,
 	Stack,
 	TextField,
 	Typography,
+	Box,
+	useMediaQuery,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-const Login = () => {
+const Login = ({ history }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
+	const disptach = useDispatch();
+	const {
+		status: loginStatus,
+		errors,
+		userInfo,
+	} = useSelector(state => state.user);
+	const sm = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
 	const handleClickShowPassword = () => {
 		setShowPassword(prev => !prev);
@@ -31,8 +42,18 @@ const Login = () => {
 	const handleLogin = e => {
 		e.preventDefault();
 
-		alert('you submitted it');
+		disptach(loginUser({ email, password }));
 	};
+
+	useEffect(() => {
+		if (loginStatus === 'succeeded') {
+			setEmail('');
+			setPassword('');
+			history.push('/');
+		}
+	}, [loginStatus, history]);
+
+	console.log({ errors, userInfo });
 
 	return (
 		<AuthPageWrapper onSubmit={handleLogin}>
@@ -43,16 +64,28 @@ const Login = () => {
 				<Typography variant='subtitle2' color='secondary'>
 					Provide your credentials to launch it.
 				</Typography>
+				<Box sx={{ marginTop: '20px' }}>
+					{errors.map((error, i) =>
+						!error.param ? (
+							<FormHelperText error key={i}>
+								{error.msg}
+							</FormHelperText>
+						) : null
+					)}
+				</Box>
 				<FormControl sx={{ mt: 2 }} fullWidth>
 					<TextField
-						required
-						error={false}
+						error={
+							errors.find(e => e.param === 'email') ? true : false
+						}
+						helperText={errors.map(e =>
+							e.param === 'email' ? e.msg : null
+						)}
 						color='secondary'
 						label='Email'
 						variant='outlined'
 						placeholder='Type your email'
 						size='small'
-						// helperText='Incorrect entry.'
 						value={email}
 						onChange={e => setEmail(e.target.value)}
 					/>
@@ -61,14 +94,18 @@ const Login = () => {
 					<InputLabel htmlFor='password' color='secondary'>
 						Password
 					</InputLabel>
+
 					<OutlinedInput
-						error={false}
+						error={
+							errors.find(e => e.param === 'password')
+								? true
+								: false
+						}
 						color='secondary'
 						id='password'
 						label='Password'
 						placeholder='Type your password'
 						type={showPassword ? 'text' : 'password'}
-						// helperText='Incorrect entry.'
 						value={password}
 						onChange={e => setPassword(e.target.value)}
 						endAdornment={
@@ -90,6 +127,17 @@ const Login = () => {
 							) : null
 						}
 					/>
+					<FormHelperText
+						error={
+							errors.find(e => e.param === 'password')
+								? true
+								: false
+						}
+					>
+						{errors.map(e =>
+							e.param === 'password' ? e.msg : null
+						)}
+					</FormHelperText>
 				</FormControl>
 				<Stack
 					direction='row'
@@ -99,21 +147,23 @@ const Login = () => {
 					spacing={2}
 				>
 					<LoadingButton
-						loading={false}
+						loading={loginStatus === 'loading'}
 						variant='contained'
 						disableElevation
+						size={sm ? 'small' : 'large'}
 						type='submit'
 					>
 						Login
 					</LoadingButton>
-					<Button variant='outlined'>
-						<Link
-							to='/register'
-							style={{ textDecoration: 'none', color: 'inherit' }}
-						>
-							haven't an account?
-						</Link>
-					</Button>
+					<Link
+						to='/register'
+						style={{
+							textDecoration: 'none',
+							color: 'var(--mainColor)',
+						}}
+					>
+						haven't an account?
+					</Link>
 				</Stack>
 			</div>
 		</AuthPageWrapper>

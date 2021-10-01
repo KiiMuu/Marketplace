@@ -1,25 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from 'state/user/userApi';
 import { AuthPageWrapper } from 'styles/auth';
 import {
-	Button,
 	FormControl,
 	IconButton,
 	InputAdornment,
 	InputLabel,
+	FormHelperText,
 	OutlinedInput,
 	Stack,
 	TextField,
 	Typography,
+	Box,
+	useMediaQuery,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-const Register = () => {
+const Register = ({ history }) => {
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
+	const disptach = useDispatch();
+	const { status: registerStatus, errors } = useSelector(state => state.user);
+	const sm = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
 	const handleClickShowPassword = () => {
 		setShowPassword(prev => !prev);
@@ -32,8 +39,17 @@ const Register = () => {
 	const handleRegister = e => {
 		e.preventDefault();
 
-		alert('you submitted it');
+		disptach(registerUser({ name, email, password }));
 	};
+
+	useEffect(() => {
+		if (registerStatus === 'succeeded') {
+			setName('');
+			setEmail('');
+			setPassword('');
+			history.push('/');
+		}
+	}, [registerStatus, history]);
 
 	return (
 		<AuthPageWrapper onSubmit={handleRegister}>
@@ -44,30 +60,45 @@ const Register = () => {
 				<Typography variant='subtitle2' color='secondary'>
 					Create a new account.
 				</Typography>
+				<Box sx={{ marginTop: '20px' }}>
+					{errors.map((error, i) =>
+						!error.param ? (
+							<FormHelperText error key={i}>
+								{error.msg}
+							</FormHelperText>
+						) : null
+					)}
+				</Box>
 				<FormControl sx={{ mt: 2 }} fullWidth>
 					<TextField
-						required
-						error={false}
+						error={
+							errors.find(e => e.param === 'name') ? true : false
+						}
+						helperText={errors.map(e =>
+							e.param === 'name' ? e.msg : null
+						)}
 						color='secondary'
 						label='Name'
 						variant='outlined'
 						placeholder='Type your name'
 						size='small'
-						// helperText='Incorrect entry.'
 						value={name}
 						onChange={e => setName(e.target.value)}
 					/>
 				</FormControl>
 				<FormControl sx={{ mt: 2 }} fullWidth>
 					<TextField
-						required
-						error={false}
+						error={
+							errors.find(e => e.param === 'email') ? true : false
+						}
+						helperText={errors.map(e =>
+							e.param === 'email' ? e.msg : null
+						)}
 						color='secondary'
 						label='Email'
 						variant='outlined'
 						placeholder='Type your email'
 						size='small'
-						// helperText='Incorrect entry.'
 						value={email}
 						onChange={e => setEmail(e.target.value)}
 					/>
@@ -76,14 +107,18 @@ const Register = () => {
 					<InputLabel htmlFor='password' color='secondary'>
 						Password
 					</InputLabel>
+
 					<OutlinedInput
-						error={false}
+						error={
+							errors.find(e => e.param === 'password')
+								? true
+								: false
+						}
 						color='secondary'
 						id='password'
 						label='Password'
 						placeholder='Type your password'
 						type={showPassword ? 'text' : 'password'}
-						// helperText='Incorrect entry.'
 						value={password}
 						onChange={e => setPassword(e.target.value)}
 						endAdornment={
@@ -105,6 +140,17 @@ const Register = () => {
 							) : null
 						}
 					/>
+					<FormHelperText
+						error={
+							errors.find(e => e.param === 'password')
+								? true
+								: false
+						}
+					>
+						{errors.map(e =>
+							e.param === 'password' ? e.msg : null
+						)}
+					</FormHelperText>
 				</FormControl>
 				<Stack
 					direction='row'
@@ -114,21 +160,23 @@ const Register = () => {
 					spacing={2}
 				>
 					<LoadingButton
-						loading={false}
+						loading={registerStatus === 'loading'}
 						variant='contained'
 						disableElevation
+						size={sm ? 'small' : 'large'}
 						type='submit'
 					>
 						Register
 					</LoadingButton>
-					<Button variant='outlined'>
-						<Link
-							to='/login'
-							style={{ textDecoration: 'none', color: 'inherit' }}
-						>
-							have an account?
-						</Link>
-					</Button>
+					<Link
+						to='/login'
+						style={{
+							textDecoration: 'none',
+							color: 'var(--mainColor)',
+						}}
+					>
+						have an account?
+					</Link>
 				</Stack>
 			</div>
 		</AuthPageWrapper>
