@@ -18,9 +18,8 @@ const globalStyles = globalCss({
 		fontSize: '1.6rem',
 		padding: '0',
 		margin: '0',
-		height: '2000px',
 	},
-	'*, *::before, *::after': {
+	'&*, &*::before, &*::after': {
 		boxSizing: 'inherit',
 		padding: '0',
 		margin: '0',

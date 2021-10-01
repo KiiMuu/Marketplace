@@ -100,7 +100,7 @@ const Navigation = () => {
 							color='inherit'
 							style={{ textDecoration: 'none' }}
 						>
-							Marketplace
+							HBA
 						</Typography>
 						<Box sx={{ flexGrow: 1 }} />
 						<Box sx={{ display: { xs: 'none', md: 'flex' } }}>
