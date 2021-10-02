@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from 'state/user/userApi';
@@ -24,7 +24,7 @@ const Register = ({ history }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
-	const disptach = useDispatch();
+	const dispatch = useDispatch();
 	const { status: registerStatus, errors } = useSelector(state => state.user);
 	const sm = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
@@ -36,20 +36,23 @@ const Register = ({ history }) => {
 		e.preventDefault();
 	};
 
-	const handleRegister = e => {
+	const handleRegister = async e => {
 		e.preventDefault();
 
-		disptach(registerUser({ name, email, password }));
-	};
+		try {
+			const user = await dispatch(
+				registerUser({ name, email, password })
+			).unwrap();
 
-	useEffect(() => {
-		if (registerStatus === 'succeeded') {
 			setName('');
 			setEmail('');
 			setPassword('');
-			history.push('/');
+			window.localStorage.setItem('marketUser', JSON.stringify(user));
+			history.push('/user/dashboard');
+		} catch (err) {
+			console.log('error', err);
 		}
-	}, [registerStatus, history]);
+	};
 
 	return (
 		<AuthPageWrapper onSubmit={handleRegister}>

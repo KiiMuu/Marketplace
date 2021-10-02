@@ -7,6 +7,8 @@ const globalStyles = globalCss({
 		'--br': '3px', // border-radius
 		'--borderColor': '#f0ebeb',
 		'--textGray': 'rgb(91, 112, 131)',
+		'--navHeight': '64px',
+		'--mobNavHeight': '56px',
 	},
 	html: {
 		fontSize: '62.5%',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from 'state/user/userApi';
@@ -23,12 +23,8 @@ const Login = ({ history }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
-	const disptach = useDispatch();
-	const {
-		status: loginStatus,
-		errors,
-		userInfo,
-	} = useSelector(state => state.user);
+	const dispatch = useDispatch();
+	const { status: loginStatus, errors } = useSelector(state => state.user);
 	const sm = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
 	const handleClickShowPassword = () => {
@@ -39,21 +35,22 @@ const Login = ({ history }) => {
 		e.preventDefault();
 	};
 
-	const handleLogin = e => {
+	const handleLogin = async e => {
 		e.preventDefault();
 
-		disptach(loginUser({ email, password }));
-	};
+		try {
+			const user = await dispatch(
+				loginUser({ email, password })
+			).unwrap();
 
-	useEffect(() => {
-		if (loginStatus === 'succeeded') {
 			setEmail('');
 			setPassword('');
-			history.push('/');
+			window.localStorage.setItem('marketUser', JSON.stringify(user));
+			history.push('/user/dashboard');
+		} catch (err) {
+			console.log('error', err);
 		}
-	}, [loginStatus, history]);
-
-	console.log({ errors, userInfo });
+	};
 
 	return (
 		<AuthPageWrapper onSubmit={handleLogin}>

@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useCallback } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { onLogout } from 'state/user/userSlice';
 import HideOnscroll from './HideOnScroll';
+import MobMenu from './MobMenu';
 import {
 	AppBar,
 	IconButton,
-	Menu,
 	MenuItem,
 	Toolbar,
 	Typography,
@@ -14,77 +16,114 @@ import { Box } from '@mui/system';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
+import LogoutOutlined from '@mui/icons-material/LogoutOutlined';
 
 const Navigation = () => {
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+	const dispatch = useDispatch();
+	const { userInfo } = useSelector(state => state.user);
+	const history = useHistory();
 
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-	const handleMobileMenuClose = () => {
+	const handleMobileMenuClose = useCallback(() => {
 		setMobileMoreAnchorEl(null);
-	};
+	}, []);
 
-	const handleMobileMenuOpen = e => {
+	const handleMobileMenuOpen = useCallback(e => {
 		setMobileMoreAnchorEl(e.currentTarget);
-	};
+	}, []);
 
-	const handleMenuClose = () => {
+	const handleMenuClose = useCallback(() => {
 		handleMobileMenuClose();
-	};
+	}, [handleMobileMenuClose]);
 
-	const renderMobileMenu = (
-		<Menu
-			anchorEl={mobileMoreAnchorEl}
-			anchorOrigin={{
-				vertical: 'top',
-				horizontal: 'right',
-			}}
-			id='mobMenu'
-			keepMounted
-			transformOrigin={{
-				vertical: 'top',
-				horizontal: 'right',
-			}}
-			open={isMobileMenuOpen}
-			onClose={handleMobileMenuClose}
-		>
-			<MenuItem onClick={handleMenuClose}>
-				<ListItemIcon>
-					<PersonAddOutlinedIcon fontSize='small' />
-				</ListItemIcon>
-				<Typography
-					variant='span'
-					noWrap
-					sx={{
-						display: { xs: 'none', sm: 'block' },
-						textDecoration: 'none',
-					}}
-					component={Link}
-					to='/register'
-					color='inherit'
-				>
-					Register
-				</Typography>
-			</MenuItem>
-			<MenuItem onClick={handleMenuClose}>
-				<ListItemIcon>
-					<LoginOutlinedIcon fontSize='small' />
-				</ListItemIcon>
-				<Typography
-					variant='span'
-					noWrap
-					sx={{
-						display: { xs: 'none', sm: 'block' },
-						textDecoration: 'none',
-					}}
-					component={Link}
-					to='/login'
-					color='inherit'
-				>
-					Login
-				</Typography>
-			</MenuItem>
-		</Menu>
+	const handleLogout = useCallback(() => {
+		dispatch(onLogout());
+		setMobileMoreAnchorEl(null);
+		window.localStorage.removeItem('marketUser');
+		history.push('/login');
+	}, [dispatch, history]);
+
+	const renderNavItems = () => (
+		<Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+			{!userInfo && (
+				<>
+					<MenuItem>
+						<ListItemIcon>
+							<PersonAddOutlinedIcon
+								fontSize='small'
+								style={{ color: '#fff' }}
+							/>
+						</ListItemIcon>
+						<Typography
+							variant='span'
+							noWrap
+							component={Link}
+							to='/register'
+							color='inherit'
+							sx={{
+								display: {
+									xs: 'none',
+									sm: 'block',
+								},
+								textDecoration: 'none',
+							}}
+						>
+							Register
+						</Typography>
+					</MenuItem>
+					<MenuItem>
+						<ListItemIcon>
+							<LoginOutlinedIcon
+								fontSize='small'
+								style={{ color: '#fff' }}
+							/>
+						</ListItemIcon>
+						<Typography
+							variant='span'
+							noWrap
+							component={Link}
+							to='/login'
+							color='inherit'
+							sx={{
+								display: {
+									xs: 'none',
+									sm: 'block',
+								},
+								textDecoration: 'none',
+							}}
+						>
+							Login
+						</Typography>
+					</MenuItem>
+				</>
+			)}
+			{userInfo && (
+				<MenuItem onClick={handleLogout}>
+					<ListItemIcon>
+						<LogoutOutlined
+							fontSize='small'
+							style={{ color: '#fff' }}
+						/>
+					</ListItemIcon>
+					<Typography
+						variant='span'
+						noWrap
+						color='inherit'
+						sx={{
+							display: {
+								xs: 'none',
+								sm: 'block',
+							},
+							textDecoration: 'none',
+						}}
+					>
+						Logout
+					</Typography>
+				</MenuItem>
+			)}
+		</Box>
 	);
 
 	return (
@@ -103,50 +142,8 @@ const Navigation = () => {
 							HBA
 						</Typography>
 						<Box sx={{ flexGrow: 1 }} />
-						<Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-							<MenuItem>
-								<ListItemIcon>
-									<PersonAddOutlinedIcon
-										fontSize='small'
-										style={{ color: '#fff' }}
-									/>
-								</ListItemIcon>
-								<Typography
-									variant='span'
-									noWrap
-									component={Link}
-									to='/register'
-									color='inherit'
-									sx={{
-										display: { xs: 'none', sm: 'block' },
-										textDecoration: 'none',
-									}}
-								>
-									Register
-								</Typography>
-							</MenuItem>
-							<MenuItem>
-								<ListItemIcon>
-									<LoginOutlinedIcon
-										fontSize='small'
-										style={{ color: '#fff' }}
-									/>
-								</ListItemIcon>
-								<Typography
-									variant='span'
-									noWrap
-									component={Link}
-									to='/login'
-									color='inherit'
-									sx={{
-										display: { xs: 'none', sm: 'block' },
-										textDecoration: 'none',
-									}}
-								>
-									Login
-								</Typography>
-							</MenuItem>
-						</Box>
+
+						{renderNavItems()}
 						{/* mobile box */}
 						<Box sx={{ display: { xs: 'flex', md: 'none' } }}>
 							<IconButton
@@ -163,7 +160,14 @@ const Navigation = () => {
 					</Toolbar>
 				</AppBar>
 			</HideOnscroll>
-			{renderMobileMenu}
+			<MobMenu
+				mobileMoreAnchorEl={mobileMoreAnchorEl}
+				isMobileMenuOpen={isMobileMenuOpen}
+				handleMobileMenuClose={handleMobileMenuClose}
+				userInfo={userInfo}
+				handleMenuClose={handleMenuClose}
+				handleLogout={handleLogout}
+			/>
 		</Box>
 	);
 };

@@ -1,14 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { registerUser, loginUser } from './userApi';
 
+let userState;
+if (window.localStorage.getItem('marketUser')) {
+	userState = JSON.parse(window.localStorage.getItem('marketUser'));
+} else {
+	userState = null;
+}
+
 export const userSlice = createSlice({
 	name: 'user',
 	initialState: {
 		status: 'idle',
 		errors: [],
-		userInfo: {},
+		userInfo: userState,
 	},
-	reducers: {},
+	reducers: {
+		onLogout: state => {
+			state.userInfo = null;
+		},
+	},
 	extraReducers(builder) {
 		builder
 			.addCase(registerUser.pending, (state, action) => {
@@ -37,5 +48,7 @@ export const userSlice = createSlice({
 			});
 	},
 });
+
+export const { onLogout } = userSlice.actions;
 
 export default userSlice.reducer;
