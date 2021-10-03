@@ -17,6 +17,7 @@ import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import LogoutOutlined from '@mui/icons-material/LogoutOutlined';
+import DashboardCustomize from '@mui/icons-material/DashboardCustomize';
 
 const Navigation = () => {
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -47,6 +48,32 @@ const Navigation = () => {
 
 	const renderNavItems = () => (
 		<Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+			{userInfo && (
+				<MenuItem>
+					<ListItemIcon>
+						<DashboardCustomize
+							fontSize='small'
+							style={{ color: '#fff' }}
+						/>
+					</ListItemIcon>
+					<Typography
+						variant='span'
+						noWrap
+						component={Link}
+						to='/user/dashboard'
+						color='inherit'
+						sx={{
+							display: {
+								xs: 'none',
+								sm: 'block',
+							},
+							textDecoration: 'none',
+						}}
+					>
+						Dashboard
+					</Typography>
+				</MenuItem>
+			)}
 			{!userInfo && (
 				<>
 					<MenuItem>

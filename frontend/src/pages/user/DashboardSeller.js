@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
 import DashboardLayout from 'components/user/DashboardLayout';
 import { Button, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
+import { AddOutlined } from '@mui/icons-material';
 
-const Dashboard = () => {
+const DashboardSeller = () => {
 	return (
 		<DashboardLayout>
 			<Box sx={{ marginTop: '20px' }}>
@@ -14,15 +14,14 @@ const Dashboard = () => {
 					flexWrap='wrap'
 				>
 					<Typography variant='h6' fontWeight='bold'>
-						Your Booking
+						Your Hotels
 					</Typography>
-					<Button variant='contained' disableElevation>
-						<Link
-							to='/'
-							style={{ color: 'inherit', textDecoration: 'none' }}
-						>
-							Browse Hotels
-						</Link>
+					<Button
+						variant='contained'
+						disableElevation
+						startIcon={<AddOutlined fontSize='small' />}
+					>
+						Add New
 					</Button>
 				</Grid>
 			</Box>
@@ -30,4 +29,4 @@ const Dashboard = () => {
 	);
 };
 
-export default Dashboard;
+export default DashboardSeller;

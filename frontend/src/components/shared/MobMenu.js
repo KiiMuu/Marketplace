@@ -3,6 +3,7 @@ import { Menu, MenuItem, Typography, ListItemIcon } from '@mui/material';
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import LogoutOutlined from '@mui/icons-material/LogoutOutlined';
+import DashboardCustomize from '@mui/icons-material/DashboardCustomize';
 
 const MobMenu = ({
 	mobileMoreAnchorEl,
@@ -37,7 +38,6 @@ const MobMenu = ({
 						variant='span'
 						noWrap
 						sx={{
-							display: { xs: 'none', sm: 'block' },
 							textDecoration: 'none',
 						}}
 						component={Link}
@@ -55,7 +55,6 @@ const MobMenu = ({
 						variant='span'
 						noWrap
 						sx={{
-							display: { xs: 'none', sm: 'block' },
 							textDecoration: 'none',
 						}}
 						component={Link}
@@ -66,8 +65,25 @@ const MobMenu = ({
 					</Typography>
 				</MenuItem>,
 			]}
-			{userInfo && (
-				<MenuItem onClick={handleLogout}>
+			{userInfo && [
+				<MenuItem onClick={handleMenuClose} key='3'>
+					<ListItemIcon>
+						<DashboardCustomize fontSize='small' />
+					</ListItemIcon>
+					<Typography
+						variant='span'
+						noWrap
+						component={Link}
+						to='/user/dashboard'
+						sx={{
+							textDecoration: 'none',
+						}}
+						color='inherit'
+					>
+						Dashboard
+					</Typography>
+				</MenuItem>,
+				<MenuItem onClick={handleLogout} key='4'>
 					<ListItemIcon>
 						<LogoutOutlined fontSize='small' />
 					</ListItemIcon>
@@ -75,15 +91,14 @@ const MobMenu = ({
 						variant='span'
 						noWrap
 						sx={{
-							display: { xs: 'none', sm: 'block' },
 							textDecoration: 'none',
 						}}
 						color='inherit'
 					>
 						Logout
 					</Typography>
-				</MenuItem>
-			)}
+				</MenuItem>,
+			]}
 		</Menu>
 	);
 };

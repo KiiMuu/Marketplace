@@ -8,6 +8,7 @@ const Register = lazy(() => import('pages/register'));
 const Login = lazy(() => import('pages/login'));
 const Booking = lazy(() => import('pages/booking'));
 const Dashboard = lazy(() => import('pages/user/Dashboard'));
+const DashboardSeller = lazy(() => import('pages/user/DashboardSeller'));
 const NotFound = lazy(() => import('pages/404'));
 
 const App = () => {
@@ -20,6 +21,9 @@ const App = () => {
 				<Route exact path='/login' component={Login} />
 				<PrivateRoute exact path='/user/dashboard'>
 					<Dashboard />
+				</PrivateRoute>
+				<PrivateRoute exact path='/user/dashboard/seller'>
+					<DashboardSeller />
 				</PrivateRoute>
 				<Route component={NotFound} />
 			</Switch>

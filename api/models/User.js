@@ -21,8 +21,8 @@ const UserSchema = new Schema(
 			maxlength: 64,
 			trim: true,
 		},
-		stripeAccountId: '',
-		stripeSeller: {},
+		stripe_account_id: '',
+		stripe_seller: {},
 		stripeSession: {},
 	},
 	{
