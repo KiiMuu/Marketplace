@@ -10,6 +10,7 @@ const Dashboard = () => {
 				<Grid
 					container
 					spacing={[0, 2]}
+					gap={1}
 					justifyContent='space-between'
 					flexWrap='wrap'
 				>
