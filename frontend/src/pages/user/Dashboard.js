@@ -16,7 +16,7 @@ const Dashboard = () => {
 					<Typography variant='h6' fontWeight='bold'>
 						Your Booking
 					</Typography>
-					<Button variant='contained' disableElevation>
+					<Button variant='contained' disableElevation size='small'>
 						<Link
 							to='/'
 							style={{ color: 'inherit', textDecoration: 'none' }}

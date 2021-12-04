@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import DashboardLayout from 'components/user/DashboardLayout';
 import { Button, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { AddOutlined } from '@mui/icons-material';
+import AddNewHotel from 'components/user/AddNewHotel';
 
 const DashboardSeller = () => {
+	const [open, setOpen] = useState(false);
+
 	return (
 		<DashboardLayout>
 			<Box sx={{ marginTop: '20px' }}>
@@ -19,10 +23,13 @@ const DashboardSeller = () => {
 					<Button
 						variant='contained'
 						disableElevation
+						size='small'
 						startIcon={<AddOutlined fontSize='small' />}
+						onClick={() => setOpen(true)}
 					>
 						Add New
 					</Button>
+					<AddNewHotel open={open} setOpen={setOpen} />
 				</Grid>
 			</Box>
 		</DashboardLayout>

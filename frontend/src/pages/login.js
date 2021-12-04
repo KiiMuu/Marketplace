@@ -6,6 +6,7 @@ import { AuthPageWrapper } from 'styles/auth';
 import {
 	FormControl,
 	IconButton,
+	Button,
 	InputAdornment,
 	InputLabel,
 	FormHelperText,
@@ -152,15 +153,17 @@ const Login = ({ history }) => {
 					>
 						Login
 					</LoadingButton>
-					<Link
-						to='/register'
-						style={{
-							textDecoration: 'none',
-							color: 'var(--mainColor)',
-						}}
-					>
-						haven't an account?
-					</Link>
+					<Button size={sm ? 'small' : 'large'} disableElevation>
+						<Link
+							to='/register'
+							style={{
+								textDecoration: 'none',
+								color: 'var(--mainColor)',
+							}}
+						>
+							haven't an account?
+						</Link>
+					</Button>
 				</Stack>
 			</div>
 		</AuthPageWrapper>
