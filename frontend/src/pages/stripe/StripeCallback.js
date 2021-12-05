@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAccountStatus } from 'state/stripe/stripeApi';
+import { updateUserInLS } from 'state/user/userApi';
 import { CircularProgress } from '@mui/material';
 
 const StripeCallback = ({ history }) => {
@@ -13,7 +14,14 @@ const StripeCallback = ({ history }) => {
 				getAccountStatus({ token: userInfo?.token })
 			).unwrap();
 
-			console.log({ res });
+			updateUserInLS(res, () => {
+				dispatch({
+					type: 'user/login',
+					payload: res,
+				});
+			});
+
+			window.location.href = '/user/dashboard/seller';
 		} catch (error) {
 			console.error('ERROR', error);
 		}

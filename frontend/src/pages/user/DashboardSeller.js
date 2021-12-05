@@ -11,7 +11,7 @@ const DashboardSeller = () => {
 	const [open, setOpen] = useState(false);
 	const dispatch = useDispatch();
 	const { userInfo } = useSelector(state => state.user);
-	const { status, errors, data } = useSelector(state => state.stripe);
+	const { status } = useSelector(state => state.stripe);
 
 	const handleClick = async () => {
 		try {
@@ -24,8 +24,6 @@ const DashboardSeller = () => {
 			console.log('error', err);
 		}
 	};
-
-	console.log({ status, errors, data });
 
 	const connected = () => (
 		<Grid
