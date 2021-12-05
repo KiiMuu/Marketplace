@@ -9,6 +9,7 @@ const Login = lazy(() => import('pages/login'));
 const Booking = lazy(() => import('pages/booking'));
 const Dashboard = lazy(() => import('pages/user/Dashboard'));
 const DashboardSeller = lazy(() => import('pages/user/DashboardSeller'));
+const StripeCallback = lazy(() => import('pages/stripe/StripeCallback'));
 const NotFound = lazy(() => import('pages/404'));
 
 const App = () => {
@@ -24,6 +25,9 @@ const App = () => {
 				</PrivateRoute>
 				<PrivateRoute exact path='/user/dashboard/seller'>
 					<DashboardSeller />
+				</PrivateRoute>
+				<PrivateRoute exact path='/stripe/callback'>
+					<StripeCallback />
 				</PrivateRoute>
 				<Route component={NotFound} />
 			</Switch>

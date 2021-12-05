@@ -47,3 +47,15 @@ export const loginUser = createAsyncThunk(
 		}
 	}
 );
+
+export const updateUserInLS = (user, next) => {
+	if (window.localStorage.getItem('marketUser')) {
+		let marketUser = JSON.parse(localStorage.getItem('marketUser'));
+
+		marketUser = user;
+
+		localStorage.setItem('marketUser', JSON.stringify(marketUser));
+
+		next();
+	}
+};

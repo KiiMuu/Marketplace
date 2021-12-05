@@ -25,3 +25,28 @@ export const createConnectAccount = createAsyncThunk(
 		}
 	}
 );
+
+export const getAccountStatus = createAsyncThunk(
+	'stripe/getAccountStatus',
+	async (stripeData, { rejectWithValue }) => {
+		const { token } = stripeData;
+
+		try {
+			const { data } = await axios.post(
+				`${process.env.REACT_APP_API}/stripe/getAccountStatus`,
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);

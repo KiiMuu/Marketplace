@@ -19,7 +19,7 @@ const DashboardSeller = () => {
 				createConnectAccount({ token: userInfo?.token })
 			).unwrap();
 
-			console.log({ res });
+			window.location.href = res; // login link!
 		} catch (err) {
 			console.log('error', err);
 		}
