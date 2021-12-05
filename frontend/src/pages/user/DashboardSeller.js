@@ -16,7 +16,7 @@ const DashboardSeller = () => {
 	const handleClick = async () => {
 		try {
 			let res = await dispatch(
-				createConnectAccount(userInfo?.token)
+				createConnectAccount({ token: userInfo?.token })
 			).unwrap();
 
 			console.log({ res });
