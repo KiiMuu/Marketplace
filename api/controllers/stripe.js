@@ -36,15 +36,30 @@ const createConnectAccount = async (req, res) => {
 	res.json(link);
 };
 
+const updateDelayDays = async accountId => {
+	const account = await stripe.accounts.update(accountId, {
+		settings: {
+			payouts: {
+				schedule: {
+					delay_days: 7,
+				},
+			},
+		},
+	});
+
+	return account;
+};
+
 const getAccountStatus = async (req, res) => {
 	const user = await User.findById(req.user.id).exec();
 
 	const account = await stripe.accounts.retrieve(user.stripe_account_id);
 
+	const updatedAccount = await updateDelayDays(account.id);
 	const updatedUser = await User.findByIdAndUpdate(
 		user._id,
 		{
-			stripe_seller: account,
+			stripe_seller: updatedAccount,
 		},
 		{ new: true }
 	)
