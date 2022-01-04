@@ -1,15 +1,39 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import { getAccountBalance, payoutSetting } from 'state/stripe/stripeApi';
+import { currencyFormatter } from 'utils/currencyFormatter';
 import {
 	Avatar,
 	ListItem,
 	ListItemAvatar,
 	ListItemText,
 	Grid,
+	IconButton,
+	CircularProgress,
 } from '@mui/material';
+import { Settings } from '@mui/icons-material';
 
 const ConnectNav = () => {
+	const dispatch = useDispatch();
 	const { userInfo } = useSelector(state => state.user);
+	const { status, userBalance } = useSelector(state => state.stripe);
+
+	useEffect(() => {
+		dispatch(getAccountBalance({ token: userInfo?.token }));
+	}, [dispatch, userInfo?.token]);
+
+	const handlePayoutSettings = async () => {
+		try {
+			let res = await dispatch(
+				payoutSetting({ token: userInfo?.token })
+			).unwrap();
+
+			window.location.href = res.url; // login link!
+		} catch (error) {
+			alert('Unable to access settings!');
+		}
+	};
 
 	return (
 		<Grid container spacing={[0, 2]}>
@@ -29,10 +53,25 @@ const ConnectNav = () => {
 			{userInfo?.stripe_seller?.charges_enabled && (
 				<>
 					<Grid item xs={12} sm={6} lg={4}>
-						Pending Balance
+						{status === 'loading' ? (
+							<CircularProgress size={20} color='secondary' />
+						) : (
+							userBalance?.pending?.map((b, i) => (
+								<span key={i}>{currencyFormatter(b)}</span>
+							))
+						)}
 					</Grid>
 					<Grid item xs={12} sm={6} lg={4}>
-						Payout Settings
+						<ListItem disableGutters onClick={handlePayoutSettings}>
+							<ListItemText
+								primary='Payout Settings'
+								secondary={
+									<IconButton>
+										<Settings />
+									</IconButton>
+								}
+							/>
+						</ListItem>
 					</Grid>
 				</>
 			)}

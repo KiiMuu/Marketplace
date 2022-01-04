@@ -4,7 +4,7 @@ import { getAccountStatus } from 'state/stripe/stripeApi';
 import { updateUserInLS } from 'state/user/userApi';
 import { CircularProgress } from '@mui/material';
 
-const StripeCallback = ({ history }) => {
+const StripeCallback = () => {
 	const dispatch = useDispatch();
 	const { userInfo } = useSelector(state => state.user);
 
@@ -28,8 +28,8 @@ const StripeCallback = ({ history }) => {
 	}, [dispatch, userInfo?.token]);
 
 	useEffect(() => {
-		if (userInfo && userInfo.token) accountStatus();
-	}, [userInfo, accountStatus]);
+		if (userInfo && userInfo.token) dispatch(accountStatus());
+	}, [dispatch, userInfo, accountStatus]);
 
 	return (
 		<div style={{ textAlign: 'center', marginTop: '100px' }}>

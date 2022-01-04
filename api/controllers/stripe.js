@@ -1,6 +1,7 @@
 import User from '../models/User';
 import Stripe from 'stripe';
 import queryString from 'query-string';
+import generateToken from '../util/generateToken';
 
 const stripe = Stripe(process.env.STRIPE_SECRET);
 
@@ -66,7 +67,57 @@ const getAccountStatus = async (req, res) => {
 		.select('-password')
 		.exec();
 
-	res.json(updatedUser);
+	res.json({
+		token: generateToken(user._id),
+		_id: user._id,
+		name: updatedUser.name,
+		email: updatedUser.email,
+		createdAt: updatedUser.createdAt,
+		updatedAt: updatedUser.updatedAt,
+		stripe_account_id: updatedUser.stripe_account_id,
+		stripe_seller: updatedUser.stripe_seller,
+		stripeSession: updatedUser.stripeSession,
+	});
 };
 
-export { createConnectAccount, getAccountStatus };
+const getAccountBalance = async (req, res) => {
+	const user = await User.findById(req.user.id).exec();
+
+	try {
+		const balance = await stripe.balance.retrieve({
+			stripeAccount: user.stripe_account_id,
+		});
+
+		return res.status(200).json(balance);
+	} catch (error) {
+		return res.status(400).json({
+			message: error.message,
+		});
+	}
+};
+
+const payoutSetting = async (req, res) => {
+	const user = await User.findById(req.user.id).exec();
+
+	try {
+		const loginLink = await stripe.accounts.createLoginLink(
+			user.stripe_account_id,
+			{
+				redirect_url: process.env.STRIPE_SETTING_REDIRECT_URL,
+			}
+		);
+
+		return res.status(200).json(loginLink);
+	} catch (error) {
+		return res.status(400).json({
+			message: error.message,
+		});
+	}
+};
+
+export {
+	createConnectAccount,
+	getAccountStatus,
+	getAccountBalance,
+	payoutSetting,
+};

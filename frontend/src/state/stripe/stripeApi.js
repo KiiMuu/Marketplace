@@ -50,3 +50,51 @@ export const getAccountStatus = createAsyncThunk(
 		}
 	}
 );
+
+export const getAccountBalance = createAsyncThunk(
+	'stripe/getAccountBalance',
+	async (stripeData, { rejectWithValue }) => {
+		const { token } = stripeData;
+
+		try {
+			const { data } = await axios.post(
+				`${process.env.REACT_APP_API}/stripe/getAccountBalance`,
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);
+
+export const payoutSetting = createAsyncThunk(
+	'stripe/payoutSetting',
+	async ({ token }, { rejectWithValue }) => {
+		try {
+			const { data } = await axios.post(
+				`${process.env.REACT_APP_API}/stripe/payoutSetting`,
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);

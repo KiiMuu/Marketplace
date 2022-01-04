@@ -1,12 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { createConnectAccount } from './stripeApi';
+import {
+	createConnectAccount,
+	getAccountBalance,
+	payoutSetting,
+} from './stripeApi';
 
 export const stripeSlice = createSlice({
 	name: 'stripe',
 	initialState: {
 		status: 'idle',
 		errors: [],
-		data: {},
+		userBalance: 0,
 	},
 	reducers: {},
 	extraReducers(builder) {
@@ -17,9 +21,31 @@ export const stripeSlice = createSlice({
 			.addCase(createConnectAccount.fulfilled, (state, action) => {
 				state.status = 'succeeded';
 				state.errors = [];
-				state.data = action.payload;
 			})
 			.addCase(createConnectAccount.rejected, (state, action) => {
+				state.status = 'failed';
+				state.errors = action.payload;
+			})
+			.addCase(getAccountBalance.pending, (state, action) => {
+				state.status = 'loading';
+			})
+			.addCase(getAccountBalance.fulfilled, (state, action) => {
+				state.status = 'succeeded';
+				state.errors = [];
+				state.userBalance = action.payload;
+			})
+			.addCase(getAccountBalance.rejected, (state, action) => {
+				state.status = 'failed';
+				state.errors = action.payload;
+			})
+			.addCase(payoutSetting.pending, (state, action) => {
+				state.status = 'loading';
+			})
+			.addCase(payoutSetting.fulfilled, (state, action) => {
+				state.status = 'succeeded';
+				state.errors = [];
+			})
+			.addCase(payoutSetting.rejected, (state, action) => {
 				state.status = 'failed';
 				state.errors = action.payload;
 			});
