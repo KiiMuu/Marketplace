@@ -8,6 +8,11 @@ import {
 	Grid,
 	InputAdornment,
 	TextField,
+	Select,
+	MenuItem,
+	FormControl,
+	InputLabel,
+	OutlinedInput,
 } from '@mui/material';
 import { styled } from '@mui/system';
 import { AddLocationAlt, ImageOutlined } from '@mui/icons-material';
@@ -33,7 +38,7 @@ const AddNewHotel = ({ open, setOpen }) => {
 		'https://via.placeholder.com/100x100.png?text=Preview'
 	);
 
-	const { title, content, location, image, price, from, to, bed } = values;
+	const { title, content, location, price, from, to, bed } = values;
 
 	const handleChange = e => {
 		setValues({
@@ -47,7 +52,10 @@ const AddNewHotel = ({ open, setOpen }) => {
 		setPreview(URL.createObjectURL(e.target.files[0]));
 	};
 
-	const handleSubmit = e => {};
+	const handleSubmit = e => {
+		e.preventDefault();
+		console.table(values);
+	};
 
 	const hotelForm = () => (
 		<>
@@ -96,15 +104,38 @@ const AddNewHotel = ({ open, setOpen }) => {
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
-						<TextField
-							name='bed'
-							label='Number of Beds'
-							type='number'
-							maxRows={4}
-							fullWidth
-							value={bed}
-							onChange={handleChange}
-						/>
+						<FormControl sx={{ width: '100%' }}>
+							<InputLabel id='numberOfBeds'>
+								Number of Beds
+							</InputLabel>
+							<Select
+								labelId='numberOfBeds'
+								id='numberOfBeds'
+								placeholder='Number of Beds'
+								fullWidth
+								value={bed}
+								onChange={e =>
+									setValues({
+										...values,
+										bed: e.target.value,
+									})
+								}
+								input={<OutlinedInput label='Number of Beds' />}
+							>
+								<MenuItem key={1} value={1}>
+									1
+								</MenuItem>
+								<MenuItem key={2} value={2}>
+									2
+								</MenuItem>
+								<MenuItem key={3} value={3}>
+									3
+								</MenuItem>
+								<MenuItem key={4} value={4}>
+									4
+								</MenuItem>
+							</Select>
+						</FormControl>
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<TextField
@@ -193,7 +224,11 @@ const AddNewHotel = ({ open, setOpen }) => {
 				>
 					Close
 				</Button>
-				<Button variant='contained' disableElevation>
+				<Button
+					onClick={handleSubmit}
+					variant='contained'
+					disableElevation
+				>
 					Save
 				</Button>
 			</DialogActions>
