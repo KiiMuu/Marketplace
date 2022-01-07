@@ -12,7 +12,7 @@ import {
 	IconButton,
 	CircularProgress,
 } from '@mui/material';
-import { Settings } from '@mui/icons-material';
+import { MoneyOffCsredOutlined, Settings } from '@mui/icons-material';
 
 const ConnectNav = () => {
 	const dispatch = useDispatch();
@@ -56,20 +56,37 @@ const ConnectNav = () => {
 						{status === 'loading' ? (
 							<CircularProgress size={20} color='secondary' />
 						) : (
-							userBalance?.pending?.map((b, i) => (
-								<span key={i}>{currencyFormatter(b)}</span>
-							))
+							<ListItem disableGutters>
+								<ListItemAvatar>
+									<Avatar>
+										<MoneyOffCsredOutlined />
+									</Avatar>
+								</ListItemAvatar>
+								<ListItemText
+									primary='Available'
+									secondary={userBalance?.pending?.map(
+										(b, i) => (
+											<span key={i}>
+												{currencyFormatter(b)}
+											</span>
+										)
+									)}
+								/>
+							</ListItem>
 						)}
 					</Grid>
 					<Grid item xs={12} sm={6} lg={4}>
 						<ListItem disableGutters onClick={handlePayoutSettings}>
-							<ListItemText
-								primary='Payout Settings'
-								secondary={
+							<ListItemAvatar>
+								<Avatar>
 									<IconButton>
-										<Settings />
+										<Settings sx={{ color: '#fff' }} />
 									</IconButton>
-								}
+								</Avatar>
+							</ListItemAvatar>
+							<ListItemText
+								primary='Payouts'
+								secondary='Settings'
 							/>
 						</ListItem>
 					</Grid>
