@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import MainDialog from 'components/shared/MainDialog';
+import { createHotel } from 'state/hotel/hotelApi';
 import {
 	Button,
 	DialogActions,
@@ -38,7 +40,11 @@ const AddNewHotel = ({ open, setOpen }) => {
 		'https://via.placeholder.com/100x100.png?text=Preview'
 	);
 
-	const { title, content, location, price, from, to, bed } = values;
+	const { title, content, location, price, image, from, to, bed } = values;
+
+	const dispatch = useDispatch();
+	const { userInfo } = useSelector(state => state.user);
+	const { status, error, alert } = useSelector(state => state.hotel);
 
 	const handleChange = e => {
 		setValues({
@@ -52,9 +58,22 @@ const AddNewHotel = ({ open, setOpen }) => {
 		setPreview(URL.createObjectURL(e.target.files[0]));
 	};
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
-		console.table(values);
+
+		let hotelData = new FormData();
+		image && hotelData.append('image', image);
+		hotelData.append('hotelData', values);
+
+		try {
+			const hotel = await dispatch(
+				createHotel({ token: userInfo?.token, hotelData })
+			).unwrap();
+
+			console.log({ hotel, status, error, alert });
+		} catch (err) {
+			console.log('error', err);
+		}
 	};
 
 	const hotelForm = () => (
@@ -162,7 +181,10 @@ const AddNewHotel = ({ open, setOpen }) => {
 								value={from}
 								disablePast
 								onChange={newValue => {
-									setValues({ ...values, from: newValue });
+									setValues({
+										...values,
+										from: newValue._d,
+									});
 								}}
 								renderInput={params => (
 									<TextField {...params} fullWidth />
@@ -177,7 +199,7 @@ const AddNewHotel = ({ open, setOpen }) => {
 								value={to}
 								disablePast
 								onChange={newValue => {
-									setValues({ ...values, to: newValue });
+									setValues({ ...values, to: newValue._d });
 								}}
 								renderInput={params => (
 									<TextField {...params} fullWidth />
