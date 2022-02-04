@@ -1,23 +1,23 @@
 import { forwardRef } from 'react';
-import { Button, IconButton, MuiAlert } from '@mui/material';
+import { Button, IconButton, Snackbar } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
 import { CloseOutlined } from '@mui/icons-material';
-import useSnackBar from 'hooks/useSnackbar';
 
 const Alert = forwardRef(function Alert(props, ref) {
 	return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 
-const Snackbar = ({
+const MySnackbar = ({
+	open,
+	handleClose,
 	isCustomized = false,
-	autoHideDuration,
+	autoHideDuration = 3000,
 	severity,
 	customizedMsg,
 	message,
 	vertical = 'bottom',
 	horizontal = 'left',
 }) => {
-	const { open, handleClose } = useSnackBar();
-
 	const action = (
 		<>
 			<Button color='secondary' size='small' onClick={handleClose}>
@@ -57,4 +57,4 @@ const Snackbar = ({
 	);
 };
 
-export default Snackbar;
+export default MySnackbar;

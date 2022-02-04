@@ -27,14 +27,14 @@ const HotelSchema = new Schema(
 			ref: 'User',
 		},
 		image: {
-			type: Buffer,
+			data: Buffer,
 			contentType: String,
 		},
 		from: {
-			type: Data,
+			type: Date,
 		},
 		to: {
-			type: Data,
+			type: Date,
 		},
 		bed: {
 			type: Number,

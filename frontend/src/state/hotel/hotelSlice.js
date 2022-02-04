@@ -6,8 +6,8 @@ export const hotelSlice = createSlice({
 	initialState: {
 		hotels: [],
 		status: 'idle',
-		error: null,
-		alert: null,
+		errors: [],
+		alert: '',
 	},
 	reducers: {
 		// synchronous requests made to the store are handled HERE!
@@ -20,13 +20,13 @@ export const hotelSlice = createSlice({
 			})
 			.addCase(createHotel.fulfilled, (state, action) => {
 				state.status = 'succeeded';
-				state.alert = 'Hotel created successfully!';
+				state.alert = 'Hotel created successfully';
 				state.hotels = state.hotels.concat(action.payload);
 			})
 			.addCase(createHotel.rejected, (state, action) => {
 				state.status = 'failed';
-				state.alert = 'Failed to create hotel!';
-				state.error = action.payload;
+				state.alert = 'Failed to create hotel';
+				state.errors = action.payload;
 			});
 	},
 });

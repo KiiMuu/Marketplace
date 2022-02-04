@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MainDialog from 'components/shared/MainDialog';
+import MySnackbar from 'components/shared/Snackbar';
+import useSnackBar from 'hooks/useSnackbar';
 import { createHotel } from 'state/hotel/hotelApi';
 import {
 	Button,
@@ -16,6 +18,7 @@ import {
 	InputLabel,
 	OutlinedInput,
 } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import { styled } from '@mui/system';
 import { AddLocationAlt, ImageOutlined } from '@mui/icons-material';
 import { DatePicker, LocalizationProvider } from '@mui/lab';
@@ -27,14 +30,14 @@ const Input = styled('input')({
 
 const AddNewHotel = ({ open, setOpen }) => {
 	const [values, setValues] = useState({
-		title: '',
-		content: '',
-		location: '',
+		title: 'Title',
+		content: 'Content',
+		location: 'Location',
 		image: '',
-		price: '',
+		price: 100,
 		from: '',
 		to: '',
-		bed: '',
+		bed: 2,
 	});
 	const [preview, setPreview] = useState(
 		'https://via.placeholder.com/100x100.png?text=Preview'
@@ -42,9 +45,18 @@ const AddNewHotel = ({ open, setOpen }) => {
 
 	const { title, content, location, price, image, from, to, bed } = values;
 
+	const {
+		open: openSnack,
+		setOpen: setOpenSnack,
+		handleClose,
+	} = useSnackBar();
 	const dispatch = useDispatch();
 	const { userInfo } = useSelector(state => state.user);
-	const { status, error, alert } = useSelector(state => state.hotel);
+	const {
+		status: hotelCreationStatus,
+		alert: hotelCreationAlert,
+		errors,
+	} = useSelector(state => state.hotel);
 
 	const handleChange = e => {
 		setValues({
@@ -63,16 +75,34 @@ const AddNewHotel = ({ open, setOpen }) => {
 
 		let hotelData = new FormData();
 		image && hotelData.append('image', image);
-		hotelData.append('hotelData', values);
+		hotelData.append('title', title);
+		hotelData.append('content', content);
+		hotelData.append('price', price);
+		hotelData.append('bed', bed);
+		hotelData.append('location', location);
+		hotelData.append('from', from);
+		hotelData.append('to', to);
 
 		try {
-			const hotel = await dispatch(
+			await dispatch(
 				createHotel({ token: userInfo?.token, hotelData })
 			).unwrap();
 
-			console.log({ hotel, status, error, alert });
+			setValues({
+				title: '',
+				content: '',
+				location: '',
+				image: '',
+				price: '',
+				from: null,
+				to: null,
+				bed: '',
+			});
+			setPreview('https://via.placeholder.com/100x100.png?text=Preview');
+			setOpenSnack(true);
 		} catch (err) {
-			console.log('error', err);
+			console.log(JSON.stringify(err, null, 4));
+			setOpenSnack(true);
 		}
 	};
 
@@ -90,6 +120,18 @@ const AddNewHotel = ({ open, setOpen }) => {
 				>
 					<Grid item xs={12} sm={6}>
 						<TextField
+							error={
+								hotelCreationStatus === 'failed' &&
+								errors.find(e => e.param === 'title')
+									? true
+									: false
+							}
+							helperText={
+								hotelCreationStatus === 'failed' &&
+								errors.map(e =>
+									e.param === 'title' ? e.msg : null
+								)
+							}
 							name='title'
 							label='Title'
 							type='text'
@@ -101,6 +143,18 @@ const AddNewHotel = ({ open, setOpen }) => {
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<TextField
+							error={
+								hotelCreationStatus === 'failed' &&
+								errors.find(e => e.param === 'content')
+									? true
+									: false
+							}
+							helperText={
+								hotelCreationStatus === 'failed' &&
+								errors.map(e =>
+									e.param === 'content' ? e.msg : null
+								)
+							}
 							name='content'
 							label='Content'
 							multiline
@@ -113,6 +167,18 @@ const AddNewHotel = ({ open, setOpen }) => {
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<TextField
+							error={
+								hotelCreationStatus === 'failed' &&
+								errors.find(e => e.param === 'price')
+									? true
+									: false
+							}
+							helperText={
+								hotelCreationStatus === 'failed' &&
+								errors.map(e =>
+									e.param === 'price' ? e.msg : null
+								)
+							}
 							name='price'
 							label='Price'
 							type='number'
@@ -246,26 +312,39 @@ const AddNewHotel = ({ open, setOpen }) => {
 				>
 					Close
 				</Button>
-				<Button
+				<LoadingButton
 					onClick={handleSubmit}
 					variant='contained'
 					disableElevation
+					loading={hotelCreationStatus === 'loading'}
 				>
 					Save
-				</Button>
+				</LoadingButton>
 			</DialogActions>
 		</>
 	);
 
 	return (
-		<MainDialog
-			open={open}
-			setOpen={setOpen}
-			maxWidth='md'
-			dialogTitle='Add a new hotel'
-		>
-			{hotelForm()}
-		</MainDialog>
+		<>
+			<MySnackbar
+				open={openSnack}
+				autoHideDuration={5000}
+				handleClose={handleClose}
+				isCustomized={true}
+				severity={
+					hotelCreationStatus === 'succeeded' ? 'success' : 'error'
+				}
+				customizedMsg={hotelCreationAlert}
+			/>
+			<MainDialog
+				open={open}
+				setOpen={setOpen}
+				maxWidth='md'
+				dialogTitle='Add a new hotel'
+			>
+				{hotelForm()}
+			</MainDialog>
+		</>
 	);
 };
 
