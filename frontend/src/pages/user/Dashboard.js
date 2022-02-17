@@ -9,7 +9,6 @@ const Dashboard = () => {
 			<Box sx={{ marginTop: '20px' }}>
 				<Grid
 					container
-					spacing={[0, 2]}
 					gap={1}
 					justifyContent='space-between'
 					flexWrap='wrap'

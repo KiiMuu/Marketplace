@@ -13,6 +13,7 @@ const createHotel = async (req, res, next) => {
 			}
 
 			let hotel = new Hotel(fields);
+			hotel.createdBy = req.user.id;
 
 			if (files.image) {
 				hotel.image.data = fs.readFileSync(files.image.filepath);
@@ -89,4 +90,19 @@ const getHotelImage = async (req, res) => {
 	}
 };
 
-export { createHotel, getHotels, getHotelImage };
+const getSellerHotels = async (req, res) => {
+	try {
+		let sellerHotels = await Hotel.find({ createdBy: req.user.id })
+			.select('-image.data')
+			.populate('createdBy', '_id name')
+			.exec();
+
+		return res.json(sellerHotels);
+	} catch (error) {
+		return res.status(400).json({
+			msg: error.message,
+		});
+	}
+};
+
+export { createHotel, getHotels, getHotelImage, getSellerHotels };

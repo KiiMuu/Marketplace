@@ -41,3 +41,25 @@ export const fetchHotels = createAsyncThunk(
 		}
 	}
 );
+
+export const fetchSellerHotels = createAsyncThunk(
+	'hotels/fetchSellerHotels',
+	async ({ token }, { rejectWithValue }) => {
+		try {
+			const { data } = await axios.get(
+				`${process.env.REACT_APP_API}/hotel/seller-hotels`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);

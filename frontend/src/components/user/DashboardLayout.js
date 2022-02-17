@@ -13,7 +13,7 @@ const DashboardLayout = ({ children }) => {
 				<ConnectNav />
 			</Box>
 			<DashboardNav />
-			<Box sx={{ p: 2 }}>{children}</Box>
+			<Box>{children}</Box>
 		</Container>
 	);
 };

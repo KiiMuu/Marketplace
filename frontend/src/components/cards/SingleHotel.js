@@ -18,7 +18,12 @@ import { Box } from '@mui/system';
 import { LocationOn, DateRange, Edit, Delete } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
-const SingleHotel = ({ hotel, handleHotelDelete = f => f }) => {
+const SingleHotel = ({
+	hotel,
+	handleHotelDelete = f => f,
+	owner = false,
+	showViewMoreButton = true,
+}) => {
 	const history = useHistory();
 
 	return (
@@ -85,32 +90,37 @@ const SingleHotel = ({ hotel, handleHotelDelete = f => f }) => {
 					</Typography>
 				</CardContent>
 				<CardActions sx={spaceBetweenCentering}>
-					<Button
-						variant='outlined'
-						size='small'
-						onClick={() => history.push(`hotel/${hotel._id}`)}
-					>
-						Learn More
-					</Button>
-					<Box>
-						<IconButton
-							color='secondary'
+					{showViewMoreButton && (
+						<Button
+							variant='outlined'
 							size='small'
-							aria-label='edit hotel'
-							component={Link}
-							to={`/hotel/edit/${hotel._id}`}
+							onClick={() => history.push(`hotel/${hotel._id}`)}
 						>
-							<Edit sx={{ fontSize: 17 }} />
-						</IconButton>
-						<IconButton
-							color='error'
-							size='small'
-							aria-label='delete hotel'
-							onClick={() => handleHotelDelete(hotel._id)}
-						>
-							<Delete sx={{ fontSize: 17 }} />
-						</IconButton>
-					</Box>
+							Learn More
+						</Button>
+					)}
+
+					{owner && (
+						<Box>
+							<IconButton
+								color='secondary'
+								size='small'
+								aria-label='edit hotel'
+								component={Link}
+								to={`/hotel/edit/${hotel._id}`}
+							>
+								<Edit sx={{ fontSize: 17 }} />
+							</IconButton>
+							<IconButton
+								color='error'
+								size='small'
+								aria-label='delete hotel'
+								onClick={() => handleHotelDelete(hotel._id)}
+							>
+								<Delete sx={{ fontSize: 17 }} />
+							</IconButton>
+						</Box>
+					)}
 				</CardActions>
 			</Card>
 		</Grid>
