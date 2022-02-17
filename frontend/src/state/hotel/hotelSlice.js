@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { createHotel } from './hotelApi';
+import { createHotel, fetchHotels } from './hotelApi';
 
 export const hotelSlice = createSlice({
 	name: 'hotels',
@@ -26,6 +26,19 @@ export const hotelSlice = createSlice({
 			.addCase(createHotel.rejected, (state, action) => {
 				state.status = 'failed';
 				state.alert = 'Failed to create hotel';
+				state.errors = action.payload;
+			})
+			.addCase(fetchHotels.pending, (state, action) => {
+				state.status = 'loading';
+			})
+			.addCase(fetchHotels.fulfilled, (state, action) => {
+				state.status = 'succeeded';
+				state.alert = 'Hotels loaded successfully';
+				state.hotels = action.payload;
+			})
+			.addCase(fetchHotels.rejected, (state, action) => {
+				state.status = 'failed';
+				state.alert = 'Failed to load hotels';
 				state.errors = action.payload;
 			});
 	},

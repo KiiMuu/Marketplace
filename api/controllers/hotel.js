@@ -57,4 +57,20 @@ const createHotel = async (req, res, next) => {
 	}
 };
 
-export { createHotel };
+const getHotels = async (req, res) => {
+	try {
+		let hotels = await Hotel.find({})
+			.limit(24)
+			.select('-image.data')
+			.populate('createdBy', '_id name')
+			.exec();
+
+		return res.json(hotels);
+	} catch (error) {
+		return res.status(400).json({
+			msg: error.message,
+		});
+	}
+};
+
+export { createHotel, getHotels };

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
-const { ObjectId } = mongoose.Schema;
+const { ObjectId } = Schema.Types;
 
 const HotelSchema = new Schema(
 	{

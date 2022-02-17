@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MainDialog from 'components/shared/MainDialog';
-import MySnackbar from 'components/shared/Snackbar';
+import MySnackbar from 'components/shared/MySnackbar';
 import useSnackBar from 'hooks/useSnackbar';
 import { createHotel } from 'state/hotel/hotelApi';
 import {

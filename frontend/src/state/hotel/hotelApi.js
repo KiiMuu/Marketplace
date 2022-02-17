@@ -23,3 +23,21 @@ export const createHotel = createAsyncThunk(
 		}
 	}
 );
+
+export const fetchHotels = createAsyncThunk(
+	'hotels/fetchHotels',
+	async rejectWithValue => {
+		try {
+			const { data } = await axios.get(
+				`${process.env.REACT_APP_API}/hotel/all`,
+				{}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);

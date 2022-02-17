@@ -12,5 +12,5 @@ export const currencyFormatter = data => {
 
 	const formatter = new Intl.NumberFormat('en-US', options);
 
-	return formatter.format(data.amount / 100);
+	return formatter.format(data.amount);
 };
