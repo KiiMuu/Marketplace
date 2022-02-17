@@ -73,4 +73,20 @@ const getHotels = async (req, res) => {
 	}
 };
 
-export { createHotel, getHotels };
+const getHotelImage = async (req, res) => {
+	try {
+		let hotel = await Hotel.findById(req.params.hotelId).exec();
+
+		if (hotel && hotel.image && hotel.image.data !== null) {
+			res.set('Content-Type', hotel.image.contentType);
+
+			return res.send(hotel.image.data);
+		}
+	} catch (error) {
+		return res.status(400).json({
+			msg: error.message,
+		});
+	}
+};
+
+export { createHotel, getHotels, getHotelImage };

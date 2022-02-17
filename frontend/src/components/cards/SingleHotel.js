@@ -28,7 +28,11 @@ const SingleHotel = ({ hotel, handleHotelDelete = f => f }) => {
 					component='img'
 					alt={hotel.title}
 					height='200'
-					image='https://via.placeholder.com/900x700.png?text=Preview'
+					image={
+						hotel?.image?.contentType
+							? `${process.env.REACT_APP_API}/hotel/${hotel._id}/image`
+							: 'https://via.placeholder.com/900x700.png?text=Preview'
+					}
 				/>
 				<CardContent>
 					<Box sx={spaceBetweenCentering}>
