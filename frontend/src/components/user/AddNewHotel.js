@@ -101,7 +101,7 @@ const AddNewHotel = ({ open, setOpen }) => {
 			setPreview('https://via.placeholder.com/100x100.png?text=Preview');
 			setOpenSnack(true);
 		} catch (err) {
-			console.log(JSON.stringify(err, null, 4));
+			console.log(err);
 			setOpenSnack(true);
 		}
 	};

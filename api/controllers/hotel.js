@@ -105,4 +105,18 @@ const getSellerHotels = async (req, res) => {
 	}
 };
 
-export { createHotel, getHotels, getHotelImage, getSellerHotels };
+const deleteHotel = async (req, res) => {
+	try {
+		let removedHotel = await Hotel.findByIdAndDelete(
+			req.params.hotelId
+		).exec();
+
+		return res.json(removedHotel);
+	} catch (error) {
+		return res.status(400).json({
+			msg: error.message,
+		});
+	}
+};
+
+export { createHotel, getHotels, getHotelImage, getSellerHotels, deleteHotel };

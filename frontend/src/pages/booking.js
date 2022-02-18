@@ -2,7 +2,13 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchHotels } from 'state/hotel/hotelApi';
 import SingleHotel from 'components/cards/SingleHotel';
-import { CircularProgress, Container, Grid, Typography } from '@mui/material';
+import {
+	Alert,
+	CircularProgress,
+	Container,
+	Grid,
+	Typography,
+} from '@mui/material';
 import { Box } from '@mui/system';
 
 const Booking = () => {
@@ -24,7 +30,9 @@ const Booking = () => {
 				{status === 'loading' ? (
 					<CircularProgress size={20} />
 				) : hotels.length === 0 ? (
-					'No hotels created yet.'
+					<Alert icon={false} severity='info'>
+						No hotels created yet.
+					</Alert>
 				) : (
 					<Grid container spacing={[2, 2]}>
 						{hotels.map(hotel => (

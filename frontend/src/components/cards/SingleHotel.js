@@ -106,6 +106,7 @@ const SingleHotel = ({
 								color='secondary'
 								size='small'
 								aria-label='edit hotel'
+								title='Edit hotel'
 								component={Link}
 								to={`/hotel/edit/${hotel._id}`}
 							>
@@ -115,6 +116,7 @@ const SingleHotel = ({
 								color='error'
 								size='small'
 								aria-label='delete hotel'
+								title='Delete hotel'
 								onClick={() => handleHotelDelete(hotel._id)}
 							>
 								<Delete sx={{ fontSize: 17 }} />

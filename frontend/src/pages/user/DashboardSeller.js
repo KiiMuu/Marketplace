@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchSellerHotels } from 'state/hotel/hotelApi';
+import { fetchSellerHotels, deleteHotel } from 'state/hotel/hotelApi';
 import DashboardLayout from 'components/user/DashboardLayout';
 import AddNewHotel from 'components/user/AddNewHotel';
 import { createConnectAccount } from 'state/stripe/stripeApi';
+import SingleHotel from 'components/cards/SingleHotel';
 import {
 	Alert,
 	Button,
@@ -13,14 +14,25 @@ import {
 } from '@mui/material';
 import { Box } from '@mui/system';
 import { AddOutlined, HomeOutlined } from '@mui/icons-material';
-import SingleHotel from 'components/cards/SingleHotel';
+import useSnackBar from 'hooks/useSnackbar';
+import MySnackbar from 'components/shared/MySnackbar';
 
 const DashboardSeller = () => {
 	const [open, setOpen] = useState(false);
 	const dispatch = useDispatch();
 	const { userInfo } = useSelector(state => state.user);
 	const { status } = useSelector(state => state.stripe);
-	const { status: hotelsStatus, hotels } = useSelector(state => state.hotel);
+	const {
+		status: hotelsStatus,
+		hotels,
+		alert,
+		deletionStatus,
+	} = useSelector(state => state.hotel);
+	const {
+		open: openSnack,
+		setOpen: setOpenSnack,
+		handleClose,
+	} = useSnackBar();
 
 	const handleClick = async () => {
 		try {
@@ -33,6 +45,24 @@ const DashboardSeller = () => {
 			console.log('error', err);
 		}
 	};
+
+	const handleHotelDelete = useCallback(
+		async hotelId => {
+			if (!window.confirm('Are you sure?')) return;
+
+			try {
+				await dispatch(
+					deleteHotel({ token: userInfo?.token, hotelId })
+				).unwrap();
+
+				setOpenSnack(true);
+			} catch (err) {
+				console.log('error', err);
+				setOpenSnack(true);
+			}
+		},
+		[dispatch, userInfo?.token, setOpenSnack]
+	);
 
 	useEffect(() => {
 		if (hotelsStatus === 'idle') {
@@ -92,6 +122,14 @@ const DashboardSeller = () => {
 
 	return (
 		<DashboardLayout>
+			<MySnackbar
+				open={openSnack}
+				autoHideDuration={5000}
+				handleClose={handleClose}
+				isCustomized={true}
+				severity={deletionStatus === 'succeeded' ? 'success' : 'error'}
+				customizedMsg={alert}
+			/>
 			<Box sx={{ margin: '20px 0' }}>
 				{userInfo?.stripe_seller?.charges_enabled
 					? connected()
@@ -101,7 +139,7 @@ const DashboardSeller = () => {
 				<CircularProgress size={20} />
 			) : hotels.length === 0 ? (
 				<Alert icon={false} severity='info'>
-					You have not created any hotels yet.
+					Your hotels will be listed here.
 				</Alert>
 			) : (
 				<Grid container spacing={[0, 2]} sx={{ mb: '50px' }}>
@@ -111,6 +149,7 @@ const DashboardSeller = () => {
 							hotel={hotel}
 							showViewMoreButton={false}
 							owner={true}
+							handleHotelDelete={handleHotelDelete}
 						/>
 					))}
 				</Grid>

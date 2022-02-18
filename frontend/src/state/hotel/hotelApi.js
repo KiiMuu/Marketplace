@@ -63,3 +63,25 @@ export const fetchSellerHotels = createAsyncThunk(
 		}
 	}
 );
+
+export const deleteHotel = createAsyncThunk(
+	'hotels/deleteHotel',
+	async ({ token, hotelId }, { rejectWithValue }) => {
+		try {
+			const { data } = await axios.delete(
+				`${process.env.REACT_APP_API}/hotel/${hotelId}/delete`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);

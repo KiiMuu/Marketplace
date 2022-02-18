@@ -1,11 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { createHotel, fetchHotels, fetchSellerHotels } from './hotelApi';
+import {
+	createHotel,
+	fetchHotels,
+	fetchSellerHotels,
+	deleteHotel,
+} from './hotelApi';
 
 export const hotelSlice = createSlice({
 	name: 'hotels',
 	initialState: {
 		hotels: [],
 		status: 'idle',
+		deletionStatus: 'idle',
 		errors: [],
 		alert: '',
 	},
@@ -52,6 +58,21 @@ export const hotelSlice = createSlice({
 			.addCase(fetchSellerHotels.rejected, (state, action) => {
 				state.status = 'failed';
 				state.alert = 'Failed to load hotels';
+				state.errors = action.payload;
+			})
+			.addCase(deleteHotel.pending, (state, action) => {
+				state.deletionStatus = 'loading';
+			})
+			.addCase(deleteHotel.fulfilled, (state, action) => {
+				state.deletionStatus = 'succeeded';
+				state.alert = 'Hotel deleted successfully';
+				state.hotels = state.hotels.filter(
+					hotel => hotel._id !== action.payload._id
+				);
+			})
+			.addCase(deleteHotel.rejected, (state, action) => {
+				state.deletionStatus = 'failed';
+				state.alert = 'Failed to delete this hotel';
 				state.errors = action.payload;
 			});
 	},
