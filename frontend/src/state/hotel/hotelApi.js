@@ -85,3 +85,43 @@ export const deleteHotel = createAsyncThunk(
 		}
 	}
 );
+
+export const getHotelById = createAsyncThunk(
+	'hotels/getHotelById',
+	async ({ hotelId }, { rejectWithValue }) => {
+		try {
+			const { data } = await axios.get(
+				`${process.env.REACT_APP_API}/hotel/${hotelId}`
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);
+
+export const updateHotel = createAsyncThunk(
+	'hotels/updateHotel',
+	async ({ token, hotelId, hotelData }, { rejectWithValue }) => {
+		try {
+			const { data } = await axios.put(
+				`${process.env.REACT_APP_API}/hotel/${hotelId}/update`,
+				hotelData,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);

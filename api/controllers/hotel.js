@@ -64,6 +64,7 @@ const getHotels = async (req, res) => {
 			.limit(24)
 			.select('-image.data')
 			.populate('createdBy', '_id name')
+			.sort({ createdAt: -1 })
 			.exec();
 
 		return res.json(hotels);
@@ -94,7 +95,8 @@ const getSellerHotels = async (req, res) => {
 	try {
 		let sellerHotels = await Hotel.find({ createdBy: req.user.id })
 			.select('-image.data')
-			.populate('createdBy', '_id name')
+			.populate('createdBy', '_id name email')
+			.sort({ createdAt: -1 })
 			.exec();
 
 		return res.json(sellerHotels);
@@ -107,9 +109,9 @@ const getSellerHotels = async (req, res) => {
 
 const deleteHotel = async (req, res) => {
 	try {
-		let removedHotel = await Hotel.findByIdAndDelete(
-			req.params.hotelId
-		).exec();
+		let removedHotel = await Hotel.findByIdAndDelete(req.params.hotelId)
+			.select('-image.data')
+			.exec();
 
 		return res.json(removedHotel);
 	} catch (error) {
@@ -119,4 +121,83 @@ const deleteHotel = async (req, res) => {
 	}
 };
 
-export { createHotel, getHotels, getHotelImage, getSellerHotels, deleteHotel };
+const getHotelById = async (req, res) => {
+	try {
+		let singleHotel = await Hotel.findById(req.params.hotelId)
+			.select('-image.data')
+			.populate('createdBy', 'name email')
+			.exec();
+
+		return res.json(singleHotel);
+	} catch (error) {
+		return res.status(400).json({
+			msg: error.message,
+		});
+	}
+};
+
+const updateHotel = async (req, res) => {
+	const form = formidable({});
+
+	try {
+		form.parse(req, async (err, fields, files) => {
+			if (err) {
+				next(err);
+				return;
+			}
+
+			let data = { ...fields };
+
+			if (files.image) {
+				let image = {};
+				image.data = fs.readFileSync(files.image.filepath);
+				image.contentType = files.image.mimetype;
+
+				data.image = image;
+			}
+
+			let errors = [];
+			if (!fields.title)
+				errors.push({
+					param: 'title',
+					msg: 'Title cannot be blank.',
+				});
+			if (!fields.content) {
+				errors.push({
+					param: 'content',
+					msg: 'Content cannot be blank.',
+				});
+			}
+			if (!fields.price) {
+				errors.push({
+					param: 'price',
+					msg: 'Price cannot be blank.',
+				});
+			}
+
+			if (errors.length) return res.status(400).json(errors);
+
+			let updatedHotel = await Hotel.findByIdAndUpdate(
+				req.params.hotelId,
+				data,
+				{ new: true }
+			).select('-image.data');
+
+			return res.json(updatedHotel);
+		});
+	} catch (error) {
+		return res.status(400).json({
+			msg: error.message,
+		});
+	}
+};
+
+export {
+	createHotel,
+	getHotels,
+	getHotelImage,
+	getSellerHotels,
+	deleteHotel,
+	getHotelById,
+	updateHotel,
+};

@@ -24,7 +24,7 @@ const Booking = () => {
 	return (
 		<Box sx={{ margin: '100px 0' }}>
 			<Container maxWidth='xl'>
-				<Typography gutterBottom variant='h5'>
+				<Typography gutterBottom variant='h5' fontWeight='bold'>
 					All Hotels
 				</Typography>
 				{status === 'loading' ? (

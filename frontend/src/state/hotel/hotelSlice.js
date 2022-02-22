@@ -4,6 +4,8 @@ import {
 	fetchHotels,
 	fetchSellerHotels,
 	deleteHotel,
+	getHotelById,
+	updateHotel,
 } from './hotelApi';
 
 export const hotelSlice = createSlice({
@@ -11,7 +13,10 @@ export const hotelSlice = createSlice({
 	initialState: {
 		hotels: [],
 		status: 'idle',
+		singleHotelStatus: 'idle',
+		singleHotel: {},
 		deletionStatus: 'idle',
+		updateHotelStatus: 'idle',
 		errors: [],
 		alert: '',
 	},
@@ -21,19 +26,6 @@ export const hotelSlice = createSlice({
 	extraReducers(builder) {
 		// asynchronous requests made to the store are handled HERE!
 		builder
-			.addCase(createHotel.pending, (state, action) => {
-				state.status = 'loading';
-			})
-			.addCase(createHotel.fulfilled, (state, action) => {
-				state.status = 'succeeded';
-				state.alert = 'Hotel created successfully';
-				state.hotels = state.hotels.concat(action.payload);
-			})
-			.addCase(createHotel.rejected, (state, action) => {
-				state.status = 'failed';
-				state.alert = 'Failed to create hotel';
-				state.errors = action.payload;
-			})
 			.addCase(fetchHotels.pending, (state, action) => {
 				state.status = 'loading';
 			})
@@ -45,7 +37,7 @@ export const hotelSlice = createSlice({
 			.addCase(fetchHotels.rejected, (state, action) => {
 				state.status = 'failed';
 				state.alert = 'Failed to load hotels';
-				state.errors = action.payload;
+				// state.errors = action.payload;
 			})
 			.addCase(fetchSellerHotels.pending, (state, action) => {
 				state.status = 'loading';
@@ -58,6 +50,45 @@ export const hotelSlice = createSlice({
 			.addCase(fetchSellerHotels.rejected, (state, action) => {
 				state.status = 'failed';
 				state.alert = 'Failed to load hotels';
+				// state.errors = action.payload;
+			})
+			.addCase(createHotel.pending, (state, action) => {
+				state.status = 'loading';
+			})
+			.addCase(createHotel.fulfilled, (state, action) => {
+				state.status = 'succeeded';
+				state.alert = 'Hotel created successfully';
+				state.hotels = [action.payload, ...state.hotels];
+			})
+			.addCase(createHotel.rejected, (state, action) => {
+				state.status = 'failed';
+				state.alert = 'Failed to create hotel';
+				state.errors = action.payload;
+			})
+			.addCase(getHotelById.pending, (state, action) => {
+				state.singleHotelStatus = 'loading';
+			})
+			.addCase(getHotelById.fulfilled, (state, action) => {
+				state.singleHotelStatus = 'succeeded';
+				state.alert = 'Hotel fetched successfully';
+				state.singleHotel = action.payload;
+			})
+			.addCase(getHotelById.rejected, (state, action) => {
+				state.status = 'failed';
+				state.alert = 'Failed to fetch hotel';
+				// state.errors = action.payload;
+			})
+			.addCase(updateHotel.pending, (state, action) => {
+				state.updateHotelStatus = 'loading';
+			})
+			.addCase(updateHotel.fulfilled, (state, action) => {
+				state.updateHotelStatus = 'succeeded';
+				state.alert = 'Hotel updated successfully';
+				state.singleHotel = action.payload;
+			})
+			.addCase(updateHotel.rejected, (state, action) => {
+				state.updateHotelStatus = 'failed';
+				state.alert = 'Failed to update hotel';
 				state.errors = action.payload;
 			})
 			.addCase(deleteHotel.pending, (state, action) => {
@@ -73,7 +104,7 @@ export const hotelSlice = createSlice({
 			.addCase(deleteHotel.rejected, (state, action) => {
 				state.deletionStatus = 'failed';
 				state.alert = 'Failed to delete this hotel';
-				state.errors = action.payload;
+				// state.errors = action.payload;
 			});
 	},
 });
