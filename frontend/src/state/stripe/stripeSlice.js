@@ -1,5 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { createConnectAccount, getAccountBalance } from './stripeApi';
+import {
+	createConnectAccount,
+	getAccountBalance,
+	getSessionId,
+} from './stripeApi';
 
 export const stripeSlice = createSlice({
 	name: 'stripe',
@@ -7,6 +11,7 @@ export const stripeSlice = createSlice({
 		status: 'idle',
 		errors: [],
 		userBalance: 0,
+		sessionId: null,
 	},
 	reducers: {},
 	extraReducers(builder) {
@@ -31,6 +36,18 @@ export const stripeSlice = createSlice({
 				state.userBalance = action.payload;
 			})
 			.addCase(getAccountBalance.rejected, (state, action) => {
+				state.status = 'failed';
+				state.errors = action.payload;
+			})
+			.addCase(getSessionId.pending, (state, action) => {
+				state.status = 'loading';
+			})
+			.addCase(getSessionId.fulfilled, (state, action) => {
+				state.status = 'succeeded';
+				state.errors = [];
+				state.sessionId = action.payload;
+			})
+			.addCase(getSessionId.rejected, (state, action) => {
 				state.status = 'failed';
 				state.errors = action.payload;
 			});

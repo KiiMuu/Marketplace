@@ -7,6 +7,7 @@ import PrivateRoute from 'components/shared/PrivateRoute';
 const Register = lazy(() => import('pages/register'));
 const Login = lazy(() => import('pages/login'));
 const Booking = lazy(() => import('pages/booking'));
+const HotelDetails = lazy(() => import('pages/hotels/HotelDetails'));
 const EditHotel = lazy(() => import('pages/hotels/EditHotel'));
 const Dashboard = lazy(() => import('pages/user/Dashboard'));
 const DashboardSeller = lazy(() => import('pages/user/DashboardSeller'));
@@ -21,6 +22,7 @@ const App = () => {
 				<Route exact path='/' component={Booking} />
 				<Route exact path='/register' component={Register} />
 				<Route exact path='/login' component={Login} />
+				<Route exact path='/hotel/:hotelId' component={HotelDetails} />
 				<Route
 					exact
 					path='/hotel/edit/:hotelId'

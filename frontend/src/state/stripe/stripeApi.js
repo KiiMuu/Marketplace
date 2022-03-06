@@ -98,3 +98,26 @@ export const payoutSetting = createAsyncThunk(
 		}
 	}
 );
+
+export const getSessionId = createAsyncThunk(
+	'stripe/getSessionId',
+	async ({ token, hotelId }, { rejectWithValue }) => {
+		try {
+			const { data } = await axios.post(
+				`${process.env.REACT_APP_API}/stripe/getSessionId`,
+				{ hotelId },
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);

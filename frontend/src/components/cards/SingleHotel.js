@@ -62,17 +62,22 @@ const SingleHotel = ({
 							color='primary'
 							icon={<LocationOn sx={{ fontSize: 17 }} />}
 						/>
-						<Chip
-							label={`for ${getDiffDate(hotel.from, hotel.to)} ${
-								getDiffDate(hotel.from, hotel.to) <= 1
-									? 'day'
-									: 'days'
-							}`}
-							variant='outlined'
-							size='small'
-							color='primary'
-							icon={<DateRange sx={{ fontSize: 17 }} />}
-						/>
+						{getDiffDate(hotel.from, hotel.to) !== 0 && (
+							<Chip
+								label={`for ${getDiffDate(
+									hotel.from,
+									hotel.to
+								)} ${
+									getDiffDate(hotel.from, hotel.to) <= 1
+										? 'day'
+										: 'days'
+								}`}
+								variant='outlined'
+								size='small'
+								color='primary'
+								icon={<DateRange sx={{ fontSize: 17 }} />}
+							/>
+						)}
 					</Box>
 					<Typography
 						sx={{ m: '10px 0' }}

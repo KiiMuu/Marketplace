@@ -115,9 +115,22 @@ const payoutSetting = async (req, res) => {
 	}
 };
 
+const getSessionId = async (req, res) => {
+	try {
+		const session = await stripe.checkout.sessions.create({});
+
+		// return res.json(loginLink);
+	} catch (error) {
+		return res.status(400).json({
+			message: error.message,
+		});
+	}
+};
+
 export {
 	createConnectAccount,
 	getAccountStatus,
 	getAccountBalance,
 	payoutSetting,
+	getSessionId,
 };
