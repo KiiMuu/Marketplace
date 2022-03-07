@@ -1,6 +1,7 @@
 import fs from 'fs';
 import formidable from 'formidable';
 import Hotel from '../models/Hotel';
+import Order from '../models/Order';
 
 const createHotel = async (req, res, next) => {
 	const form = formidable({});
@@ -192,6 +193,24 @@ const updateHotel = async (req, res) => {
 	}
 };
 
+const getUserHotelBookings = async (req, res) => {
+	try {
+		const bookings = await Order.find({
+			orderedBy: req.user.id,
+		})
+			.select('session')
+			.populate('hotel', '-image.data')
+			.populate('orderedBy', '_id name email')
+			.exec();
+
+		return res.json(bookings);
+	} catch (error) {
+		return res.status(400).json({
+			msg: error.message,
+		});
+	}
+};
+
 export {
 	createHotel,
 	getHotels,
@@ -200,4 +219,5 @@ export {
 	deleteHotel,
 	getHotelById,
 	updateHotel,
+	getUserHotelBookings,
 };

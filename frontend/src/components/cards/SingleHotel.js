@@ -17,12 +17,15 @@ import {
 import { Box } from '@mui/system';
 import { LocationOn, DateRange, Edit, Delete } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import ModalInfo from 'components/shared/ModalInfo';
 
 const SingleHotel = ({
 	hotel,
 	handleHotelDelete = f => f,
 	owner = false,
 	showViewMoreButton = true,
+	session,
+	orderedBy,
 }) => {
 	const history = useHistory();
 
@@ -96,15 +99,24 @@ const SingleHotel = ({
 				</CardContent>
 				<CardActions sx={spaceBetweenCentering}>
 					{showViewMoreButton && (
-						<Button
-							variant='outlined'
-							size='small'
-							onClick={() => history.push(`hotel/${hotel._id}`)}
-						>
-							Learn More
-						</Button>
+						<Box sx={spaceBetweenCentering}>
+							<Button
+								variant='outlined'
+								size='small'
+								onClick={() =>
+									history.push(`hotel/${hotel._id}`)
+								}
+							>
+								Learn More
+							</Button>
+							{session && (
+								<ModalInfo
+									session={session}
+									orderedBy={orderedBy}
+								/>
+							)}
+						</Box>
 					)}
-
 					{owner && (
 						<Box>
 							<IconButton

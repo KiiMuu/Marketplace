@@ -6,6 +6,7 @@ import {
 	deleteHotel,
 	getHotelById,
 	updateHotel,
+	getUserBooking,
 } from './hotelApi';
 
 export const hotelSlice = createSlice({
@@ -19,6 +20,8 @@ export const hotelSlice = createSlice({
 		updateHotelStatus: 'idle',
 		errors: [],
 		alert: '',
+		userBookingsStatus: 'idle',
+		userHotelBookings: [],
 	},
 	reducers: {
 		// synchronous requests made to the store are handled HERE!
@@ -105,6 +108,17 @@ export const hotelSlice = createSlice({
 				state.deletionStatus = 'failed';
 				state.alert = 'Failed to delete this hotel';
 				// state.errors = action.payload;
+			})
+			.addCase(getUserBooking.pending, (state, action) => {
+				state.userBookingsStatus = 'loading';
+			})
+			.addCase(getUserBooking.fulfilled, (state, action) => {
+				state.userBookingsStatus = 'succeeded';
+				state.userHotelBookings = action.payload;
+			})
+			.addCase(getUserBooking.rejected, (state, action) => {
+				state.userBookingsStatus = 'failed';
+				state.alert = 'Failed to fetch your hotel bookings';
 			});
 	},
 });

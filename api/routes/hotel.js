@@ -10,7 +10,8 @@ import {
 	getSellerHotels,
 	deleteHotel,
 	getHotelById,
-    updateHotel
+	updateHotel,
+	getUserHotelBookings,
 } from '../controllers/hotel';
 import { hotelOwner, requireSignIn } from '../middleware';
 
@@ -21,5 +22,6 @@ router.get('/hotel/seller-hotels', requireSignIn, getSellerHotels);
 router.delete('/hotel/:hotelId/delete', requireSignIn, hotelOwner, deleteHotel);
 router.get('/hotel/:hotelId', getHotelById);
 router.put('/hotel/:hotelId/update', requireSignIn, hotelOwner, updateHotel);
+router.get('/hotel/user/bookings', requireSignIn, getUserHotelBookings);
 
 export default router;

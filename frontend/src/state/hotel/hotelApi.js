@@ -125,3 +125,25 @@ export const updateHotel = createAsyncThunk(
 		}
 	}
 );
+
+export const getUserBooking = createAsyncThunk(
+	'hotels/getUserBooking',
+	async ({ token }, { rejectWithValue }) => {
+		try {
+			const { data } = await axios.get(
+				`${process.env.REACT_APP_API}/hotel/user/bookings`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);
