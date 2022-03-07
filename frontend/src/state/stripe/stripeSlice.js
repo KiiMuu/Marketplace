@@ -45,7 +45,7 @@ export const stripeSlice = createSlice({
 			.addCase(getSessionId.fulfilled, (state, action) => {
 				state.status = 'succeeded';
 				state.errors = [];
-				state.sessionId = action.payload;
+				state.sessionId = action.payload.sessionId;
 			})
 			.addCase(getSessionId.rejected, (state, action) => {
 				state.status = 'failed';

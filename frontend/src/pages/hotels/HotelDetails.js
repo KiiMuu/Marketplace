@@ -14,10 +14,10 @@ import {
 	CardMedia,
 	Chip,
 	CardContent,
-	Button,
 } from '@mui/material';
 import { Box } from '@mui/system';
 import { DateRange, LocationOn } from '@mui/icons-material';
+import { LoadingButton } from '@mui/lab';
 
 const HotelDetails = ({ match, history }) => {
 	const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const HotelDetails = ({ match, history }) => {
 	const { singleHotelStatus, singleHotel, alert } = useSelector(
 		state => state.hotel
 	);
-	const { sessionId } = useSelector(state => state.stripe);
+	const { status, sessionId } = useSelector(state => state.stripe);
 
 	useEffect(() => {
 		dispatch(getHotelById({ hotelId: match.params.hotelId }));
@@ -42,9 +42,9 @@ const HotelDetails = ({ match, history }) => {
 				hotelId: match.params.hotelId,
 			})
 		);
-		console.log(userInfo.token, match.params.hotelId);
-		console.log({ sessionId });
 	};
+
+	if (status === 'succeeded') console.log({ sessionId });
 
 	return (
 		<Container maxWidth='xl'>
@@ -177,17 +177,18 @@ const HotelDetails = ({ match, history }) => {
 										Created by {singleHotel.createdBy?.name}
 									</i>
 								</Typography>
-								<Button
+								<LoadingButton
 									onClick={handleClick}
 									variant='contained'
 									disableElevation
 									size='large'
 									sx={{ mt: '25px' }}
+									loading={status === 'loading'}
 								>
 									{userInfo?.token
 										? 'Book Now'
 										: 'Login to Book'}
-								</Button>
+								</LoadingButton>
 							</CardContent>
 						</Grid>
 					</Grid>
