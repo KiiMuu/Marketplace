@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import { loadStripe } from '@stripe/stripe-js';
 import { getHotelById } from 'state/hotel/hotelApi';
 import { getSessionId } from 'state/stripe/stripeApi';
 import { getDiffDate } from 'utils/DifferenceDate';
@@ -25,26 +26,32 @@ const HotelDetails = ({ match, history }) => {
 	const { singleHotelStatus, singleHotel, alert } = useSelector(
 		state => state.hotel
 	);
-	const { status, sessionId } = useSelector(state => state.stripe);
+	const { status } = useSelector(state => state.stripe);
 
 	useEffect(() => {
 		dispatch(getHotelById({ hotelId: match.params.hotelId }));
 	}, [dispatch, match]);
 
-	const handleClick = e => {
+	const handleClick = async e => {
 		e.preventDefault();
 
 		if (!userInfo?.token) history.push('/login');
 
-		dispatch(
+		let res = await dispatch(
 			getSessionId({
 				token: userInfo.token,
 				hotelId: match.params.hotelId,
 			})
-		);
-	};
+		).unwrap();
 
-	if (status === 'succeeded') console.log({ sessionId });
+		const stripe = await loadStripe(process.env.REACT_APP_STRIPE_KEY);
+
+		stripe
+			.redirectToCheckout({
+				sessionId: res.sessionId,
+			})
+			.then(result => console.log({ result }));
+	};
 
 	return (
 		<Container maxWidth='xl'>
