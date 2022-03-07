@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router';
+import ModalInfo from 'components/shared/ModalInfo';
 import { spaceBetweenCentering } from 'theme/mixins';
 import { splitString } from 'utils/splitString';
 import { getDiffDate } from 'utils/DifferenceDate';
@@ -16,8 +18,6 @@ import {
 } from '@mui/material';
 import { Box } from '@mui/system';
 import { LocationOn, DateRange, Edit, Delete } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
-import ModalInfo from 'components/shared/ModalInfo';
 
 const SingleHotel = ({
 	hotel,

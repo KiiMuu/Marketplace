@@ -2,8 +2,6 @@ import { Alert, Grid } from '@mui/material';
 import SingleHotel from 'components/cards/SingleHotel';
 
 const HotelBookings = ({ userHotelBookings }) => {
-	console.log({ userHotelBookings });
-
 	return userHotelBookings?.length === 0 ? (
 		<Alert icon={false} severity='info'>
 			Your bookings will be listed here.

@@ -7,6 +7,7 @@ import {
 	getHotelById,
 	updateHotel,
 	getUserBooking,
+	isAlreadyBooked,
 } from './hotelApi';
 
 export const hotelSlice = createSlice({
@@ -22,6 +23,7 @@ export const hotelSlice = createSlice({
 		alert: '',
 		userBookingsStatus: 'idle',
 		userHotelBookings: [],
+		isBooked: false,
 	},
 	reducers: {
 		// synchronous requests made to the store are handled HERE!
@@ -119,6 +121,9 @@ export const hotelSlice = createSlice({
 			.addCase(getUserBooking.rejected, (state, action) => {
 				state.userBookingsStatus = 'failed';
 				state.alert = 'Failed to fetch your hotel bookings';
+			})
+			.addCase(isAlreadyBooked.fulfilled, (state, action) => {
+				state.isBooked = action.payload.isBooked;
 			});
 	},
 });

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { loadStripe } from '@stripe/stripe-js';
-import { getHotelById } from 'state/hotel/hotelApi';
+import { getHotelById, isAlreadyBooked } from 'state/hotel/hotelApi';
 import { getSessionId } from 'state/stripe/stripeApi';
 import { getDiffDate } from 'utils/DifferenceDate';
 import { currencyFormatter } from 'utils/currencyFormatter';
@@ -23,7 +23,7 @@ import { LoadingButton } from '@mui/lab';
 const HotelDetails = ({ match, history }) => {
 	const dispatch = useDispatch();
 	const { userInfo } = useSelector(state => state.user);
-	const { singleHotelStatus, singleHotel, alert } = useSelector(
+	const { singleHotelStatus, singleHotel, alert, isBooked } = useSelector(
 		state => state.hotel
 	);
 	const { status } = useSelector(state => state.stripe);
@@ -32,10 +32,26 @@ const HotelDetails = ({ match, history }) => {
 		dispatch(getHotelById({ hotelId: match.params.hotelId }));
 	}, [dispatch, match]);
 
+	useEffect(() => {
+		if (userInfo?.token) {
+			dispatch(
+				isAlreadyBooked({
+					token: userInfo.token,
+					hotelId: match.params.hotelId,
+				})
+			);
+		}
+	}, [dispatch, userInfo, match.params.hotelId]);
+
+	console.log({ isBooked });
+
 	const handleClick = async e => {
 		e.preventDefault();
 
-		if (!userInfo?.token) history.push('/login');
+		if (!userInfo?.token) {
+			history.push('/login');
+			return;
+		}
 
 		let res = await dispatch(
 			getSessionId({
@@ -191,8 +207,11 @@ const HotelDetails = ({ match, history }) => {
 									size='large'
 									sx={{ mt: '25px' }}
 									loading={status === 'loading'}
+									disabled={isBooked === true}
 								>
-									{userInfo?.token
+									{isBooked
+										? 'Already Booked'
+										: userInfo?.token
 										? 'Book Now'
 										: 'Login to Book'}
 								</LoadingButton>

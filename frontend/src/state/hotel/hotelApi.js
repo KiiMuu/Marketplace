@@ -147,3 +147,25 @@ export const getUserBooking = createAsyncThunk(
 		}
 	}
 );
+
+export const isAlreadyBooked = createAsyncThunk(
+	'hotels/isAlreadyBooked',
+	async ({ token, hotelId }, { rejectWithValue }) => {
+		try {
+			const { data } = await axios.get(
+				`${process.env.REACT_APP_API}/hotel/isAlreadyBooked/${hotelId}`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);

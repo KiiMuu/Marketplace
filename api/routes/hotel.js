@@ -12,6 +12,7 @@ import {
 	getHotelById,
 	updateHotel,
 	getUserHotelBookings,
+	isAlreadyBooked,
 } from '../controllers/hotel';
 import { hotelOwner, requireSignIn } from '../middleware';
 
@@ -23,5 +24,6 @@ router.delete('/hotel/:hotelId/delete', requireSignIn, hotelOwner, deleteHotel);
 router.get('/hotel/:hotelId', getHotelById);
 router.put('/hotel/:hotelId/update', requireSignIn, hotelOwner, updateHotel);
 router.get('/hotel/user/bookings', requireSignIn, getUserHotelBookings);
+router.get('/hotel/isAlreadyBooked/:hotelId', requireSignIn, isAlreadyBooked);
 
 export default router;

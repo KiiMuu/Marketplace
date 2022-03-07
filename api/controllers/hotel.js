@@ -61,7 +61,7 @@ const createHotel = async (req, res, next) => {
 
 const getHotels = async (req, res) => {
 	try {
-		let hotels = await Hotel.find({})
+		let hotels = await Hotel.find({ from: { $gte: new Date() } })
 			.limit(24)
 			.select('-image.data')
 			.populate('createdBy', '_id name')
@@ -211,6 +211,31 @@ const getUserHotelBookings = async (req, res) => {
 	}
 };
 
+const isAlreadyBooked = async (req, res) => {
+	try {
+		const { hotelId } = req.params;
+
+		const orders = await Order.find({
+			orderedBy: req.user.id,
+		})
+			.select('hotel')
+			.exec();
+
+		let ids = [];
+		for (let i = 0; i < orders.length; i++) {
+			ids.push(orders[i].hotel.toString());
+		}
+
+		return res.json({
+			isBooked: ids.includes(hotelId),
+		});
+	} catch (error) {
+		return res.status(400).json({
+			msg: error.message,
+		});
+	}
+};
+
 export {
 	createHotel,
 	getHotels,
@@ -220,4 +245,5 @@ export {
 	getHotelById,
 	updateHotel,
 	getUserHotelBookings,
+	isAlreadyBooked,
 };
