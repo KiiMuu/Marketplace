@@ -47,7 +47,7 @@ const SingleHotel = ({
 						<Chip
 							label={currencyFormatter({
 								currency: 'usd',
-								amount: hotel.price,
+								amount: hotel.price * 100,
 							})}
 							variant='outlined'
 							size='small'

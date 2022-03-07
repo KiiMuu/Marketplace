@@ -3,6 +3,7 @@ import {
 	createConnectAccount,
 	getAccountBalance,
 	getSessionId,
+	stripeSuccess,
 } from './stripeApi';
 
 export const stripeSlice = createSlice({
@@ -12,6 +13,7 @@ export const stripeSlice = createSlice({
 		errors: [],
 		userBalance: 0,
 		sessionId: null,
+		isSuccess: false,
 	},
 	reducers: {},
 	extraReducers(builder) {
@@ -48,6 +50,18 @@ export const stripeSlice = createSlice({
 				state.sessionId = action.payload.sessionId;
 			})
 			.addCase(getSessionId.rejected, (state, action) => {
+				state.status = 'failed';
+				state.errors = action.payload;
+			})
+			.addCase(stripeSuccess.pending, (state, action) => {
+				state.status = 'loading';
+			})
+			.addCase(stripeSuccess.fulfilled, (state, action) => {
+				state.status = 'succeeded';
+				state.errors = [];
+				state.isSuccess = action.payload.isSuccess;
+			})
+			.addCase(stripeSuccess.rejected, (state, action) => {
 				state.status = 'failed';
 				state.errors = action.payload;
 			});

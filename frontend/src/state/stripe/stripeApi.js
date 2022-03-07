@@ -121,3 +121,26 @@ export const getSessionId = createAsyncThunk(
 		}
 	}
 );
+
+export const stripeSuccess = createAsyncThunk(
+	'stripe/stripeSuccess',
+	async ({ token, hotelId }, { rejectWithValue }) => {
+		try {
+			const { data } = await axios.post(
+				`${process.env.REACT_APP_API}/stripe/stripeSuccess`,
+				{ hotelId },
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);

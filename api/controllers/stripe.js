@@ -1,5 +1,6 @@
 import User from '../models/User';
 import Hotel from '../models/Hotel';
+import Order from '../models/Order';
 import Stripe from 'stripe';
 import queryString from 'query-string';
 import generateToken from '../util/generateToken';
@@ -129,18 +130,18 @@ const getSessionId = async (req, res) => {
 			line_items: [
 				{
 					name: item.title,
-					amount: item.price * 100, // in cents
+					amount: Math.round(item.price * 100), // in cents
 					currency: 'usd',
 					quantity: 1,
 				},
 			],
 			payment_intent_data: {
-				application_fee_amount: fee * 100, // in cents, too
+				application_fee_amount: Math.round(fee * 100), // in cents, too
 				transfer_data: {
 					destination: item.createdBy.stripe_account_id,
 				},
 			},
-			success_url: process.env.STRIPE_SUCCESS_URL,
+			success_url: `${process.env.STRIPE_SUCCESS_URL}/${item._id}`,
 			cancel_url: process.env.STRIPE_CANCEL_URL,
 		});
 
@@ -160,10 +161,57 @@ const getSessionId = async (req, res) => {
 	}
 };
 
+const stripeSuccess = async (req, res) => {
+	try {
+		const { hotelId } = req.body;
+		const user = await User.findById(req.user.id).exec();
+
+		if (!user.stripeSession) return;
+
+		const session = await stripe.checkout.sessions.retrieve(
+			user.stripeSession.id
+		);
+
+		if (session.payment_status === 'paid') {
+			const isOrderExist = await Order.findOne({
+				'session.id': session.id,
+			}).exec();
+
+			if (isOrderExist) {
+				return res.json({ isSuccess: true });
+			} else {
+				await new Order({
+					hotel: hotelId,
+					session,
+					orderedBy: user.id,
+				}).save();
+
+				// remove user's stripeSession
+				await User.findByIdAndUpdate(
+					user.id,
+					{
+						$set: {
+							stripeSession: {},
+						},
+					},
+					{ new: true }
+				).exec();
+
+				return res.json({ isSuccess: true });
+			}
+		}
+	} catch (error) {
+		return res.status(400).json({
+			message: error.message,
+		});
+	}
+};
+
 export {
 	createConnectAccount,
 	getAccountStatus,
 	getAccountBalance,
 	payoutSetting,
 	getSessionId,
+	stripeSuccess,
 };

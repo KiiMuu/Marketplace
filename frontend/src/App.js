@@ -12,6 +12,8 @@ const EditHotel = lazy(() => import('pages/hotels/EditHotel'));
 const Dashboard = lazy(() => import('pages/user/Dashboard'));
 const DashboardSeller = lazy(() => import('pages/user/DashboardSeller'));
 const StripeCallback = lazy(() => import('pages/stripe/StripeCallback'));
+const StripeSuccess = lazy(() => import('pages/stripe/StripeSuccess'));
+const StripeCancel = lazy(() => import('pages/stripe/StripeCancel'));
 const NotFound = lazy(() => import('pages/404'));
 
 const App = () => {
@@ -36,6 +38,12 @@ const App = () => {
 				</PrivateRoute>
 				<PrivateRoute exact path='/stripe/callback'>
 					<StripeCallback />
+				</PrivateRoute>
+				<PrivateRoute exact path='/stripe/success/:hotelId'>
+					<StripeSuccess />
+				</PrivateRoute>
+				<PrivateRoute exact path='/stripe/cancel'>
+					<StripeCancel />
 				</PrivateRoute>
 				<Route component={NotFound} />
 			</Switch>
