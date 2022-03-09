@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchHotels } from 'state/hotel/hotelApi';
 import SingleHotel from 'components/cards/SingleHotel';
+import SearchHotels from 'components/shared/SearchHotels';
 import {
 	Alert,
 	CircularProgress,
@@ -22,11 +23,14 @@ const Booking = () => {
 	}, [status, dispatch]);
 
 	return (
-		<Box sx={{ margin: '100px 0' }}>
+		<Box sx={{ m: '100px 0' }}>
 			<Container maxWidth='xl'>
 				<Typography gutterBottom variant='h5' fontWeight='bold'>
 					All Hotels
 				</Typography>
+				<Box sx={{ mb: '15px' }}>
+					<SearchHotels />
+				</Box>
 				{status === 'loading' ? (
 					<CircularProgress size={20} />
 				) : hotels.length === 0 ? (

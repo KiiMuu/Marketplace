@@ -236,6 +236,32 @@ const isAlreadyBooked = async (req, res) => {
 	}
 };
 
+const searchHotels = async (req, res) => {
+	try {
+		const { location, date, bed } = req.body;
+
+		const result = await Hotel.find({
+			$or: [
+				{ location },
+				{ bed },
+				{
+					from: {
+						$gte: date[0],
+					},
+				},
+			],
+		})
+			.select('-image.data')
+			.exec();
+
+		return res.json(result);
+	} catch (error) {
+		return res.status(400).json({
+			msg: error.message,
+		});
+	}
+};
+
 export {
 	createHotel,
 	getHotels,
@@ -246,4 +272,5 @@ export {
 	updateHotel,
 	getUserHotelBookings,
 	isAlreadyBooked,
+	searchHotels,
 };

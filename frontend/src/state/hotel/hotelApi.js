@@ -169,3 +169,23 @@ export const isAlreadyBooked = createAsyncThunk(
 		}
 	}
 );
+
+export const searchHotels = createAsyncThunk(
+	'hotels/searchHotels',
+	async (query, { rejectWithValue }) => {
+		const { location, date, bed } = query;
+
+		try {
+			const { data } = await axios.post(
+				`${process.env.REACT_APP_API}/hotel/searchHotels`,
+				{ location, date, bed }
+			);
+
+			return data;
+		} catch (error) {
+			return rejectWithValue(
+				error.response ? error.response.data : error
+			);
+		}
+	}
+);
